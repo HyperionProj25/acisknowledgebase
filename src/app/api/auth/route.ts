@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (pin !== sitePin) {
+  if (String(pin).trim() !== sitePin.trim()) {
     return NextResponse.json({ error: "Incorrect PIN" }, { status: 401 });
   }
 
