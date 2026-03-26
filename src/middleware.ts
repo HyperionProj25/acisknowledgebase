@@ -1,16 +1,40 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow login page and auth API through
-  if (pathname === "/login" || pathname.startsWith("/api/auth")) {
-    return NextResponse.next();
+  // Handle PIN verification directly in middleware (edge function)
+  // This ensures env vars are accessible on Netlify
+  if (pathname === "/api/auth" && request.method === "POST") {
+    const { pin } = await request.json();
+    const sitePin = process.env.SITE_PIN;
+
+    if (!sitePin) {
+      return NextResponse.json(
+        { error: "PIN not configured on server" },
+        { status: 500 }
+      );
+    }
+
+    if (pin !== sitePin) {
+      return NextResponse.json({ error: "Incorrect PIN" }, { status: 401 });
+    }
+
+    const response = NextResponse.json({ success: true });
+    response.cookies.set("acis-auth", "authenticated", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      path: "/",
+    });
+    return response;
   }
 
-  // Allow static assets through
+  // Allow login page and static assets through
   if (
+    pathname === "/login" ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/fonts") ||
     pathname === "/favicon.ico" ||
@@ -26,8 +50,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Redirect to login
-  const loginUrl = new URL("/login", request.url);
-  return NextResponse.redirect(loginUrl);
+  return NextResponse.redirect(new URL("/login", request.url));
 }
 
 export const config = {
