@@ -460,6 +460,56 @@
     { "term": "Session State", "definition": "Streamlit's mechanism for persisting values across user interactions (button clicks, slider changes). Required because Streamlit reruns the full script each time.", "category": "infra" }
   ],
 
+  "walkthrough": {
+    "pitcher": {
+      "name": "Marcus Rivera",
+      "team": "NYM",
+      "opponent": "PHI",
+      "date": "August 13, 2024",
+      "season_velo": 94.2,
+      "season_spin": 2380,
+      "era": 3.12,
+      "game_score": { "home": 2, "away": 1 },
+      "inning_start": 4
+    },
+    "at_bat_progression": [
+      { "at_bat": 1, "inning": 1, "velo_drop": 0.2, "spin_drop": -10, "pitch_count": 12, "acwr": 0.95, "score_diff": 0 },
+      { "at_bat": 2, "inning": 1, "velo_drop": 0.1, "spin_drop": -15, "pitch_count": 18, "acwr": 0.96, "score_diff": 0 },
+      { "at_bat": 3, "inning": 2, "velo_drop": -0.3, "spin_drop": -20, "pitch_count": 28, "acwr": 0.97, "score_diff": 1 },
+      { "at_bat": 4, "inning": 3, "velo_drop": -0.5, "spin_drop": -35, "pitch_count": 42, "acwr": 1.00, "score_diff": 1 },
+      { "at_bat": 5, "inning": 4, "velo_drop": -0.8, "spin_drop": -50, "pitch_count": 55, "acwr": 1.05, "score_diff": 1 },
+      { "at_bat": 6, "inning": 4, "velo_drop": -1.5, "spin_drop": -80, "pitch_count": 62, "acwr": 1.10, "score_diff": 1 },
+      { "at_bat": 7, "inning": 5, "velo_drop": -1.8, "spin_drop": -100, "pitch_count": 70, "acwr": 1.18, "score_diff": 1 },
+      { "at_bat": 8, "inning": 6, "velo_drop": -2.2, "spin_drop": -130, "pitch_count": 78, "acwr": 1.25, "score_diff": 1 },
+      { "at_bat": 9, "inning": 7, "velo_drop": -2.8, "spin_drop": -160, "pitch_count": 87, "acwr": 1.35, "score_diff": 1 },
+      { "at_bat": 10, "inning": 7, "velo_drop": -3.2, "spin_drop": -190, "pitch_count": 93, "acwr": 1.40, "score_diff": 0 },
+      { "at_bat": 11, "inning": 8, "velo_drop": -3.5, "spin_drop": -220, "pitch_count": 98, "acwr": 1.48, "score_diff": 0 },
+      { "at_bat": 12, "inning": 8, "velo_drop": -4.1, "spin_drop": -280, "pitch_count": 105, "acwr": 1.52, "score_diff": -1 }
+    ],
+    "recommendation": {
+      "at_bat": 9,
+      "inning": 7,
+      "action": "PULL",
+      "trigger_features": ["velo_drop", "spin_drop", "acwr"],
+      "explanation": "Velocity down 2.8 mph, spin down 160 RPM, and workload ratio spiking at 1.35. Multiple signals converging."
+    },
+    "outcome": {
+      "days_later": 2,
+      "il_reason": "Right forearm tightness",
+      "il_duration": "15-day"
+    },
+    "scene_titles": [
+      "The Stakes",
+      "Meet the Pitcher",
+      "The Data Behind It",
+      "What ACIS Sees",
+      "The Decision",
+      "Signs of Trouble",
+      "ACIS Recommends: PULL",
+      "The Proof"
+    ]
+  },
+
   "tech_stack": [
     { "component": "RL Algorithm", "technology": "PPO via Stable Baselines3" },
     { "component": "Environment", "technology": "Gymnasium (formerly OpenAI Gym)" },

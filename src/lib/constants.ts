@@ -19,6 +19,7 @@ export const COLORS = {
 
 export const NAV_ITEMS = [
   { label: 'Overview', href: '/' },
+  { label: 'Walkthrough', href: '/walkthrough' },
   { label: 'How It Works', href: '/how-it-works' },
   { label: 'State Vector', href: '/state-vector' },
   { label: 'Reward Function', href: '/reward-function' },

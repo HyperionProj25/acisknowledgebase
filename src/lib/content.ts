@@ -189,6 +189,50 @@ export interface GlossaryTerm {
   category: string;
 }
 
+export interface WalkthroughPitcher {
+  name: string;
+  team: string;
+  opponent: string;
+  date: string;
+  season_velo: number;
+  season_spin: number;
+  era: number;
+  game_score: { home: number; away: number };
+  inning_start: number;
+}
+
+export interface AtBatSnapshot {
+  at_bat: number;
+  inning: number;
+  velo_drop: number;
+  spin_drop: number;
+  pitch_count: number;
+  acwr: number;
+  score_diff: number;
+}
+
+export interface WalkthroughRecommendation {
+  at_bat: number;
+  inning: number;
+  action: string;
+  trigger_features: string[];
+  explanation: string;
+}
+
+export interface WalkthroughOutcome {
+  days_later: number;
+  il_reason: string;
+  il_duration: string;
+}
+
+export interface Walkthrough {
+  pitcher: WalkthroughPitcher;
+  at_bat_progression: AtBatSnapshot[];
+  recommendation: WalkthroughRecommendation;
+  outcome: WalkthroughOutcome;
+  scene_titles: string[];
+}
+
 export interface Content {
   meta: Meta;
   overview: Overview;
@@ -202,6 +246,7 @@ export interface Content {
   limitations: Limitation[];
   roadmap: RoadmapItem[];
   glossary: GlossaryTerm[];
+  walkthrough: Walkthrough;
 }
 
 const content: Content = contentData as Content;
