@@ -25,7 +25,12 @@ export default function LoginPage() {
         router.push("/");
         router.refresh();
       } else {
-        setError("Incorrect PIN");
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 500) {
+          setError("Server config issue - SITE_PIN env variable may not be set");
+        } else {
+          setError(data.error || "Incorrect PIN");
+        }
         setPin("");
       }
     } catch {
