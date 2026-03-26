@@ -1,0 +1,204 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'GT America';
+  src: url('/fonts/GT-America-Standard-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT America';
+  src: url('/fonts/GT-America-Standard-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT America';
+  src: url('/fonts/GT-America-Standard-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT America Mono';
+  src: url('/fonts/GT-America-Mono-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT America Mono';
+  src: url('/fonts/GT-America-Mono-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme inline {
+  --color-brand-gold: #F5A623;
+  --color-brand-gold-light: #FBD38D;
+  --color-brand-gold-dark: #C77D18;
+  --color-navy: #1A2332;
+  --color-navy-light: #2D3748;
+  --color-gray-700: #4A5568;
+  --color-gray-500: #A0AEC0;
+  --color-gray-100: #F7FAFC;
+  --color-success: #38A169;
+  --color-warning: #ECC94B;
+  --color-danger: #E53E3E;
+
+  /* Dark theme surface colors */
+  --color-surface-base: #0D0D0D;
+  --color-surface-card: #161616;
+  --color-surface-elevated: #1E1E1E;
+  --color-surface-border: rgba(255, 255, 255, 0.08);
+  --color-surface-border-strong: rgba(255, 255, 255, 0.15);
+
+  --font-sans: 'GT America', system-ui, -apple-system, sans-serif;
+  --font-mono: 'GT America Mono', ui-monospace, monospace;
+}
+
+:root {
+  --background: #0D0D0D;
+  --foreground: #FFFFFF;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom scrollbar - dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0D0D0D;
+}
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+/* Slider styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #F5A623;
+  cursor: pointer;
+  border: 2px solid #0D0D0D;
+  box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.3);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #F5A623;
+  cursor: pointer;
+  border: 2px solid #0D0D0D;
+  box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.3);
+}
+
+/* PDF-style vertical gold lines texture (used on hero sections) */
+.gold-lines-texture {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 38px,
+      rgba(174, 142, 81, 0.06) 38px,
+      rgba(174, 142, 81, 0.06) 39px,
+      transparent 39px,
+      transparent 76px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 117px,
+      rgba(245, 166, 35, 0.08) 117px,
+      rgba(245, 166, 35, 0.08) 118px,
+      transparent 118px,
+      transparent 234px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 195px,
+      rgba(99, 85, 60, 0.05) 195px,
+      rgba(99, 85, 60, 0.05) 196px,
+      transparent 196px,
+      transparent 390px
+    );
+}
+
+/* Gold top accent bar for cards (matches PDF stat cards) */
+.gold-top-accent {
+  position: relative;
+}
+.gold-top-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #C77D18, #F5A623, #FBD38D, #F5A623, #C77D18);
+  border-radius: 999px 999px 0 0;
+}
+
+/* Gold left accent bar for section headers (matches PDF section headers) */
+.gold-left-accent {
+  position: relative;
+}
+.gold-left-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #F5A623, #C77D18);
+  border-radius: 0 4px 4px 0;
+}
+
+/* Gold horizontal divider (matches PDF dividers) */
+.gold-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #F5A623, transparent);
+}

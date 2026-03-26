@@ -1,0 +1,471 @@
+{
+  "meta": {
+    "company": "Baseline Analytics, Inc.",
+    "product": "Arm Care Intelligence System (ACIS)",
+    "product_short": "ACIS",
+    "entity_type": "Wyoming C-Corporation",
+    "version": "1.0",
+    "date": "March 2026",
+    "leadership": {
+      "ceo": { "name": "Chase Spivey", "title": "Founder & CEO" },
+      "coo": { "name": "Sheldon McClelland", "title": "Founder & COO" },
+      "chairman": { "name": "Jeff Newman", "title": "Executive Chairman" }
+    }
+  },
+
+  "overview": {
+    "headline": "Arm Care Intelligence System (ACIS)",
+    "subheadline": "AI-Powered Pitcher Injury Prevention",
+    "positioning": "ACIS monitors pitcher workload and biomechanical signals, then recommends whether to pull a pitcher or leave them in the game, at-bat by at-bat, in real time. Validated against 750,000+ real MLB at-bats from Statcast data spanning 2015 to 2025.",
+    "layers": [
+      {
+        "name": "Longitudinal Layer",
+        "description": "Tracks a pitcher's workload trends across weeks and months. Flags pitchers trending toward injury over a 30-day horizon.",
+        "status": "Separate project"
+      },
+      {
+        "name": "Real-Time Layer",
+        "description": "Monitors in-game performance at-bat by at-bat and recommends pull or leave-in decisions in real time. This is the current proof-of-concept and the focus of this knowledge base.",
+        "status": "POC complete, validated"
+      }
+    ],
+    "key_stats": [
+      { "value": "750K+", "label": "MLB at-bats analyzed" },
+      { "value": "7.75M", "label": "raw pitches processed" },
+      { "value": "10", "label": "seasons of MLB data" },
+      { "value": "3/3", "label": "validation criteria passed" }
+    ],
+    "problem": {
+      "headline": "The Problem",
+      "cost": "A single torn UCL can cost a franchise $15-30 million in lost salary, surgery, and rehabilitation, plus 12-18 months of competitive absence.",
+      "gap": "Pitchers frequently show warning signs during a game before the injury event itself: velocity drops, spin weakens, mechanics break down. Current approaches are reactive, relying on subjective coaching judgment. ACIS catches those signals automatically and flags them in real time.",
+      "annual_spend": "$4 billion+ annually on MLB pitcher salaries"
+    }
+  },
+
+  "data_flow": {
+    "nodes": [
+      {
+        "id": "statcast",
+        "label": "Statcast API",
+        "detail_label": "Raw Data Source",
+        "volume": "7.75M pitches",
+        "years": "2015-2025",
+        "description": "MLB's pitch-tracking system. Every pitch thrown in every MLB game since 2015 is recorded with velocity, spin rate, pitch type, game context, pitcher identity, inning, and more.",
+        "icon": "database"
+      },
+      {
+        "id": "preprocessor",
+        "label": "Preprocessor",
+        "detail_label": "build_atbat_features.py",
+        "description": "Compresses 7.75 million pitch-level records into one row per pitcher per at-bat. This matches the cadence a pitching coach would actually use to evaluate a pitcher between innings. Computes rolling baselines, workload ratios, and attaches outcome labels.",
+        "icon": "filter"
+      },
+      {
+        "id": "features",
+        "label": "At-Bat Features",
+        "detail_label": "6 features + 2 labels",
+        "description": "Each row captures velocity drop, spin drop, pitch count, arm stress (ACWR), inning, and score differential. Two outcome labels are attached: IL within 14 days and velocity collapse later in the game.",
+        "icon": "table"
+      },
+      {
+        "id": "environment",
+        "label": "Gymnasium Env",
+        "detail_label": "pitcher_env.py",
+        "description": "Replays historical games. Picks a random pitcher/game from the training split, loads their at-bat rows, and steps through them one at a time. Implements the standard Gymnasium interface (reset/step) so it plugs directly into Stable Baselines3.",
+        "icon": "play-circle"
+      },
+      {
+        "id": "training",
+        "label": "PPO Training",
+        "detail_label": "train_agent.py",
+        "description": "Runs for 500,000 at-bat decisions. The PPO algorithm (via Stable Baselines3) adjusts the neural network weights based on rewards earned across thousands of game episodes. The agent discovers which state patterns precede injury through trial and error.",
+        "icon": "brain"
+      },
+      {
+        "id": "model",
+        "label": "Trained Model",
+        "detail_label": ".zip file",
+        "description": "A small neural network. Takes 6 input numbers (the state vector), runs them through learned weight matrices, and outputs a binary recommendation: PULL or LEAVE IN. The weights encode the injury patterns discovered during training.",
+        "icon": "box"
+      },
+      {
+        "id": "app",
+        "label": "Streamlit App",
+        "detail_label": "3-tab interface",
+        "description": "Web interface with three tabs: Game Demo (step through real 2024-2025 games), Training Evidence (proof the agent learned), and Mock Scenario (test with synthetic games using sliders).",
+        "icon": "monitor"
+      }
+    ]
+  },
+
+  "rl_explainer": {
+    "comparison": "Most machine learning works by showing the computer thousands of labeled examples (supervised learning). Reinforcement Learning is different. You give the computer a situation, actions it can take, and a score for outcomes. The computer discovers on its own, through trial and error, which actions lead to the best scores.",
+    "analogy": "Think of teaching a dog to sit. You don't explain in words why sitting is good. You reward it when it sits, and it learns that sitting equals a treat. RL works the same way, with math instead of treats.",
+    "triad": [
+      { "concept": "State", "definition": "The 6 numbers describing the pitcher's current situation", "acis_mapping": "Velocity drop, spin drop, pitch count, stress, inning, score differential" },
+      { "concept": "Action", "definition": "The choice the agent makes", "acis_mapping": "PULL (0) or LEAVE IN (1)" },
+      { "concept": "Reward", "definition": "The score for the outcome", "acis_mapping": "Points earned or lost based on what actually happened to the pitcher" }
+    ],
+    "ppo": "PPO stands for Proximal Policy Optimization. It is the specific RL algorithm used. The 'proximal' part means it makes careful, cautious weight updates during training, avoiding overreaction to any single game's result. ACIS uses the Stable Baselines3 (SB3) library's ready-made PPO implementation.",
+    "episodes": "One episode equals one pitcher's appearance in one game. The agent starts at the first at-bat, makes decisions at-bat by at-bat, and the episode ends when the agent says PULL or the game runs out of at-bats.",
+    "timesteps": "One timestep equals one at-bat decision. 500,000 timesteps means 500,000 individual at-bat decisions made during training, spread across thousands of game episodes."
+  },
+
+  "state_vector": [
+    {
+      "index": 0,
+      "code_name": "velo_drop_from_baseline",
+      "display_name": "Velocity Drop",
+      "icon": "gauge",
+      "short_description": "How far current fastball velocity has dropped from seasonal average.",
+      "long_description": "Every pitcher has a 'normal' fastball velocity for that season, their average across all fastballs that year. During a game, if velocity drops below that baseline, the drop is recorded as a negative number. A value of -2.5 means the pitcher is throwing 2.5 mph slower than normal.",
+      "why_it_matters": "One of the clearest fatigue signals in baseball. A tired arm throws slower.",
+      "example": "-2.5 means 2.5 mph slower than seasonal average",
+      "thresholds": null,
+      "category": "biomechanical"
+    },
+    {
+      "index": 1,
+      "code_name": "spin_drop_from_baseline",
+      "display_name": "Spin Rate Drop",
+      "icon": "rotate-cw",
+      "short_description": "How far current spin rate has dropped from seasonal average.",
+      "long_description": "Same concept as velocity drop but applied to spin rate (measured in RPM). Spin rate drops when a pitcher's grip weakens or mechanics break down.",
+      "why_it_matters": "A fatigue indicator that often appears before velocity drops. Grip weakness and mechanical breakdown show in spin before speed.",
+      "example": "-150 means 150 RPM below seasonal average",
+      "thresholds": null,
+      "category": "biomechanical"
+    },
+    {
+      "index": 2,
+      "code_name": "pitch_count_so_far",
+      "display_name": "Pitch Count",
+      "icon": "hash",
+      "short_description": "Total pitches thrown in this game up to the current at-bat.",
+      "long_description": "A simple cumulative count. More pitches equals more fatigue, all else equal. This is the most intuitive fatigue measure and the one most familiar to coaching staff.",
+      "why_it_matters": "The most direct measure of in-game workload. Every additional pitch adds cumulative stress to the arm.",
+      "example": "85 means the pitcher has thrown 85 pitches so far in this game",
+      "thresholds": null,
+      "category": "workload"
+    },
+    {
+      "index": 3,
+      "code_name": "stress_accumulated",
+      "display_name": "Arm Stress (ACWR)",
+      "icon": "activity",
+      "short_description": "Acute:Chronic Workload Ratio measuring recent vs. historical arm stress.",
+      "long_description": "Acute workload = pitches thrown in the last 7 days. Chronic workload = average of the last 28 days (divided by 4 to match the 7-day scale). ACWR = acute divided by chronic. A ratio near 1.0 means the pitcher is throwing a normal amount. A spike above 1.0 means they are suddenly throwing more than usual.",
+      "why_it_matters": "Spikes in workload ratio are strongly associated with injury risk in sports science research. A pitcher coming back from rest who gets overused will show a high ACWR before injury.",
+      "example": "1.35 means the pitcher's recent 7-day workload is 35% higher than their 28-day average",
+      "thresholds": {
+        "normal": { "max": 1.2, "color": "green", "label": "Normal range" },
+        "elevated": { "min": 1.2, "max": 1.5, "color": "yellow", "label": "Yellow flag" },
+        "high": { "min": 1.5, "color": "red", "label": "Red flag" }
+      },
+      "category": "workload"
+    },
+    {
+      "index": 4,
+      "code_name": "inning",
+      "display_name": "Inning",
+      "icon": "clock",
+      "short_description": "Which inning the current at-bat is in.",
+      "long_description": "Later innings mean more pitches thrown and more accumulated fatigue context. Provides game-progression context to the other signals.",
+      "why_it_matters": "A 2 mph velocity drop in the 2nd inning means something different than the same drop in the 8th inning.",
+      "example": "7 means the current at-bat is in the 7th inning",
+      "thresholds": null,
+      "category": "context"
+    },
+    {
+      "index": 5,
+      "code_name": "score_diff",
+      "display_name": "Score Differential",
+      "icon": "bar-chart-2",
+      "short_description": "Pitcher's team score minus opponent score.",
+      "long_description": "Provides game-state context. A pitcher on a team losing by 5 might be managed differently than one in a close game. NOTE: This feature is stubbed to 0 in the current POC. It is a known limitation and is included as a placeholder for future integration.",
+      "why_it_matters": "Game context affects pull decisions in real baseball. A blowout changes the calculus.",
+      "example": "-3 means the pitcher's team is losing by 3 runs",
+      "thresholds": null,
+      "category": "context",
+      "limitation_note": "Stubbed to 0 in current POC"
+    }
+  ],
+
+  "outcome_labels": [
+    {
+      "code_name": "il_within_14d",
+      "display_name": "IL Within 14 Days",
+      "type": "boolean",
+      "description": "Did the pitcher go on the Injured List within 14 days of this game? This is the primary injury signal. If true, the game was a pre-injury game, and whatever signs the pitcher showed were real warning signs."
+    },
+    {
+      "code_name": "velo_collapse_later",
+      "display_name": "Velocity Collapse Later",
+      "type": "boolean",
+      "description": "Did the pitcher's velocity collapse (drop more than 3.0 mph from their game-opening pace) later in this same game? A shorter-horizon signal for in-game deterioration, even if no IL trip followed."
+    }
+  ],
+
+  "reward_function": {
+    "values": [
+      {
+        "id": "leave_healthy",
+        "situation": "Leave in, pitcher stays healthy",
+        "reward": 1.0,
+        "slider_min": 0,
+        "slider_max": 2.0,
+        "slider_step": 0.1,
+        "category": "True negative",
+        "rationale": "Correct conservative call. The normal outcome.",
+        "color": "green"
+      },
+      {
+        "id": "leave_injury",
+        "situation": "Leave in, pitcher goes on IL",
+        "reward": -4.0,
+        "slider_min": -10.0,
+        "slider_max": 0,
+        "slider_step": 0.5,
+        "category": "False negative (WORST)",
+        "rationale": "Missed injury signal. The worst possible outcome.",
+        "color": "red"
+      },
+      {
+        "id": "pull_collapse",
+        "situation": "Pull, velocity collapse happened later",
+        "reward": 0.5,
+        "slider_min": 0,
+        "slider_max": 2.0,
+        "slider_step": 0.1,
+        "category": "True positive",
+        "rationale": "Good catch, but smaller reward because certainty is lower.",
+        "color": "green"
+      },
+      {
+        "id": "pull_false_alarm",
+        "situation": "Pull, pitcher was fine (false alarm)",
+        "reward": -0.1,
+        "slider_min": -2.0,
+        "slider_max": 0,
+        "slider_step": 0.1,
+        "category": "False positive",
+        "rationale": "Minor disruption cost. Pulling is slightly disruptive but not catastrophic.",
+        "color": "yellow"
+      },
+      {
+        "id": "pull_il_no_collapse",
+        "situation": "Pull, IL but no in-game collapse signal",
+        "reward": 0.0,
+        "slider_min": -1.0,
+        "slider_max": 1.0,
+        "slider_step": 0.1,
+        "category": "Ambiguous",
+        "rationale": "Cannot confirm the pull helped, so neutral.",
+        "color": "gray"
+      }
+    ],
+    "presets": {
+      "current_poc": {
+        "label": "Current POC",
+        "description": "The actual values used in the proof-of-concept",
+        "values": { "leave_healthy": 1.0, "leave_injury": -4.0, "pull_collapse": 0.5, "pull_false_alarm": -0.1, "pull_il_no_collapse": 0.0 }
+      },
+      "conservative": {
+        "label": "Conservative",
+        "description": "High false alarm cost, lower injury miss penalty",
+        "values": { "leave_healthy": 1.0, "leave_injury": -2.0, "pull_collapse": 0.5, "pull_false_alarm": -1.5, "pull_il_no_collapse": -0.5 }
+      },
+      "aggressive": {
+        "label": "Aggressive",
+        "description": "Very high injury miss penalty, nearly free false alarms",
+        "values": { "leave_healthy": 0.5, "leave_injury": -8.0, "pull_collapse": 1.5, "pull_false_alarm": -0.05, "pull_il_no_collapse": 0.5 }
+      },
+      "balanced": {
+        "label": "Balanced",
+        "description": "Equal weighting of injury misses and false alarms",
+        "values": { "leave_healthy": 1.0, "leave_injury": -3.0, "pull_collapse": 1.0, "pull_false_alarm": -1.0, "pull_il_no_collapse": 0.0 }
+      }
+    },
+    "tuning_history": "The initial reward weights used -2.0 for injury misses and -0.5 for false alarms. After training, the agent was too conservative, mostly saying LEAVE IN with infrequent flags. For POC and demo purposes, the weights were adjusted to -4.0 for injury misses and -0.1 for false alarms. This produces a more aggressive agent that generates more demonstrable outcomes.",
+    "key_insight": "The reward function shapes the agent's personality. Making injury misses expensive creates an aggressive agent. Making false alarms expensive creates a conservative agent. There is no universally correct answer. In production, these weights would be calibrated with medical staff, coaching staff, and team management."
+  },
+
+  "training": {
+    "timesteps": 500000,
+    "algorithm": "PPO (Proximal Policy Optimization)",
+    "library": "Stable Baselines3 (SB3)",
+    "training_split": "2015-2023",
+    "test_split": "2024-2025",
+    "reward_curve": {
+      "start": 0.2,
+      "plateau": 0.8,
+      "oscillation_range": [0.6, 1.0],
+      "inflection_point_steps": 50000,
+      "annotations": [
+        { "step": 50000, "label": "Agent discovers basic pattern" },
+        { "step": 200000, "label": "Plateau: learned what it can from this signal" }
+      ]
+    },
+    "explanation": "The agent gets better at the reward signal over time. It does not 'read' the rules. It discovers patterns by experiencing thousands of games and noticing that certain state patterns tend to precede high-reward or low-reward outcomes.",
+    "why_500k": "A practical default. The reward curve flattened well before 500K, meaning training could have stopped at approximately 100K with essentially the same model. A production system might train for millions of timesteps on a GPU cluster."
+  },
+
+  "validation": {
+    "criteria": [
+      {
+        "id": "reward_improvement",
+        "name": "Reward Improved",
+        "description": "The agent genuinely learned during training",
+        "result": "0.710 to 0.818 (+0.108)",
+        "percentage_change": 15.2,
+        "early_value": 0.710,
+        "late_value": 0.818,
+        "passed": true,
+        "explanation": "A random agent scores around 0.0. An agent that always says LEAVE IN scores around 0.7 on a dataset where most pitchers stay healthy. ACIS at 0.818 outperforms the naive baseline through active pull decisions that earn positive rewards."
+      },
+      {
+        "id": "pull_rate_differential",
+        "name": "Distinguishes At-Risk Pitchers",
+        "description": "Pre-injury pull rate is higher than healthy pull rate",
+        "result": "6.8% vs 5.2% (+1.6 percentage points)",
+        "pre_injury_rate": 6.8,
+        "healthy_rate": 5.2,
+        "differential_percent": 31,
+        "passed": true,
+        "explanation": "The most important signal. The agent pulls injury-bound pitchers more often than healthy ones. It has learned a real discriminating pattern, not pulling randomly."
+      },
+      {
+        "id": "case_studies",
+        "name": "Named Case Studies",
+        "description": "Correct predictions on real MLB pitchers",
+        "result": "5 MLB pitchers correctly flagged before IL placement",
+        "count": 5,
+        "examples": ["Jose Quintana", "Martin Perez"],
+        "passed": true,
+        "explanation": "Five specific games where ACIS recommended pulling a pitcher, and that pitcher went on the IL within 14 days. These are the human-readable proof."
+      }
+    ],
+    "baselines": [
+      { "name": "Random Agent", "score": 0.0 },
+      { "name": "Always Leave In", "score": 0.7 },
+      { "name": "ACIS Agent", "score": 0.818 }
+    ]
+  },
+
+  "streamlit_app": {
+    "tabs": [
+      {
+        "number": 1,
+        "name": "Game Demo",
+        "description": "Pick a real game from the 2024-2025 test split and step through it at-bat by at-bat. Color coding shows signal severity (green/yellow/red). The 'Agent rec.' column shows the model's recommendation. The outcome at the bottom reveals the ground truth."
+      },
+      {
+        "number": 2,
+        "name": "Training Evidence",
+        "description": "The 'proof it works' tab. Three success criteria computed live from real data every time the app loads. No hardcoded results. Shows the reward curve, pull rate differential, and named case studies."
+      },
+      {
+        "number": 3,
+        "name": "Mock Scenario",
+        "description": "Configure a synthetic game with sliders. Inject a velocity collapse at a specific at-bat and verify the agent catches it. The controlled-conditions testing tab."
+      }
+    ],
+    "caching": {
+      "cache_data": "For regular data like DataFrames. Results saved and reused on page reload without re-reading files.",
+      "cache_resource": "For non-data objects like the trained model. The model stays loaded in memory for the whole session, avoiding multi-second reload on every interaction."
+    }
+  },
+
+  "key_files": [
+    { "path": "src/preprocess/build_atbat_features.py", "purpose": "Transforms 7.75M raw pitches into at-bat-level training rows with 6 features and 2 outcome labels" },
+    { "path": "src/env/pitcher_env.py", "purpose": "Gymnasium environment that replays historical games for the agent to train in" },
+    { "path": "src/train/train_agent.py", "purpose": "Runs the PPO training loop for 500K timesteps" },
+    { "path": "src/app/streamlit_app.py", "purpose": "Web application entry point (3-tab interface)" },
+    { "path": "config.py", "purpose": "All tunable parameters in one place (reward weights, feature thresholds, training hyperparameters)" }
+  ],
+
+  "limitations": [
+    {
+      "title": "Score Differential Stubbed",
+      "description": "The score_diff feature is always 0. Real score data was not integrated in this phase.",
+      "severity": "medium",
+      "icon": "alert-circle"
+    },
+    {
+      "title": "Partial Pitcher Names",
+      "description": "Only approximately 20 pitchers have real names mapped in the app. The other approximately 1,600 show as numeric IDs.",
+      "severity": "low",
+      "icon": "user-x"
+    },
+    {
+      "title": "No Live Data Feed",
+      "description": "The system replays historical games. A real deployment would require a live Statcast feed.",
+      "severity": "high",
+      "icon": "wifi-off"
+    },
+    {
+      "title": "Aggressive Agent Tuning",
+      "description": "Reward weights were tuned to produce more pulls for demo purposes. A production system would need calibration with medical and coaching input.",
+      "severity": "medium",
+      "icon": "sliders"
+    },
+    {
+      "title": "Approximate ACWR",
+      "description": "Based on pitch counts across calendar days only. A production workload model would incorporate pitch types, game conditions, and detailed pitcher history.",
+      "severity": "medium",
+      "icon": "calculator"
+    },
+    {
+      "title": "No Medical Validation",
+      "description": "This demonstrates a technical approach. It is not making medical predictions to act on without professional validation.",
+      "severity": "high",
+      "icon": "shield-off"
+    }
+  ],
+
+  "roadmap": [
+    { "milestone": "Live Statcast Integration", "description": "Connect to real-time pitch data for in-game monitoring" },
+    { "milestone": "Expanded Pitcher Coverage", "description": "Full name mappings and historical profiles for all active MLB pitchers" },
+    { "milestone": "MLB Partnership Pilot", "description": "Live deployment with an MLB partner team (pending MLBPA approval)" },
+    { "milestone": "Reward Calibration", "description": "Medical and coaching staff input on reward weight calibration" },
+    { "milestone": "Longitudinal Layer Integration", "description": "Connect the season-long trend analysis with real-time monitoring" },
+    { "milestone": "Production Workload Model", "description": "Enhanced ACWR incorporating pitch types, game conditions, and detailed pitcher history" }
+  ],
+
+  "glossary": [
+    { "term": "ACIS", "definition": "Arm Care Intelligence System. Baseline Analytics' AI-powered pitcher injury prevention technology.", "category": "product" },
+    { "term": "Reinforcement Learning (RL)", "definition": "A branch of machine learning where an agent learns by trial and error, receiving rewards for good outcomes and penalties for bad ones, rather than being shown labeled examples.", "category": "rl" },
+    { "term": "Agent", "definition": "The decision-maker being trained. In ACIS, a small neural network that takes 6 state numbers as input and outputs a pull or leave-in recommendation.", "category": "rl" },
+    { "term": "State", "definition": "The 6 numbers describing the pitcher's current situation at a given at-bat: velocity drop, spin drop, pitch count, arm stress, inning, and score differential.", "category": "rl" },
+    { "term": "Action", "definition": "The agent's binary choice at each at-bat: PULL (0) or LEAVE IN (1).", "category": "rl" },
+    { "term": "Reward", "definition": "The score the agent receives for its decision, ranging from -4.0 (missed injury) to +1.0 (correct leave-in on a healthy pitcher).", "category": "rl" },
+    { "term": "Episode", "definition": "One complete run through the environment. In ACIS, one episode equals one pitcher's appearance in one game.", "category": "rl" },
+    { "term": "Timestep", "definition": "One individual decision point. In ACIS, one timestep equals one at-bat decision.", "category": "rl" },
+    { "term": "PPO (Proximal Policy Optimization)", "definition": "The specific RL algorithm used to train ACIS. Known for stability and broad applicability. Makes cautious weight updates to avoid overreacting to any single game's result.", "category": "rl" },
+    { "term": "Neural Network", "definition": "A chain of math operations loosely inspired by brain neurons. Data flows in, gets multiplied by learned weights, passes through transformation layers, and produces an output.", "category": "rl" },
+    { "term": "Weights", "definition": "The numbers inside a neural network that get adjusted during training. Start random, end up encoding learned patterns.", "category": "rl" },
+    { "term": "Backpropagation", "definition": "The mathematical process that adjusts neural network weights based on reward signals. Runs thousands of times during training.", "category": "rl" },
+    { "term": "Training Split", "definition": "The 2015-2023 MLB seasons used to train the agent. The agent learns exclusively from this data.", "category": "data" },
+    { "term": "Test Split", "definition": "The 2024-2025 MLB seasons held out for evaluation. The agent never sees this data during training, ensuring fair performance measurement.", "category": "data" },
+    { "term": "Overfitting", "definition": "When an agent memorizes training data patterns but fails to generalize to new, unseen data. The train/test split guards against this.", "category": "rl" },
+    { "term": "Reward Function", "definition": "The scoring system that defines what 'good' means. The most important design decision in the system. Shapes the agent's personality.", "category": "rl" },
+    { "term": "Gymnasium", "definition": "A standard Python interface for RL environments (formerly OpenAI Gym). Defines reset() and step() methods that allow environments to plug into RL libraries.", "category": "infra" },
+    { "term": "Stable Baselines3 (SB3)", "definition": "A Python library providing production-ready implementations of RL algorithms including PPO. ACIS uses SB3 rather than implementing PPO from scratch.", "category": "infra" },
+    { "term": "Statcast", "definition": "MLB's pitch-tracking system. Records every pitch thrown in every MLB game with velocity, spin rate, pitch type, and game context. The data source for ACIS.", "category": "baseball" },
+    { "term": "ACWR", "definition": "Acute:Chronic Workload Ratio. A sports science metric. Acute = 7-day workload. Chronic = 28-day average (divided by 4). Ratio above 1.2 is a yellow flag; above 1.5 is a red flag.", "category": "baseball" },
+    { "term": "Injured List (IL)", "definition": "MLB's designation for players unable to play due to injury. A pitcher going on the IL within 14 days of a game is the primary injury outcome signal in ACIS.", "category": "baseball" },
+    { "term": "Velocity Collapse", "definition": "A drop of more than 3.0 mph from a pitcher's game-opening fastball pace. Used as a shorter-horizon in-game deterioration signal.", "category": "baseball" },
+    { "term": "Streamlit", "definition": "A Python library for building web applications from data scripts. Used for the ACIS demo interface. Reruns the full script on every interaction.", "category": "infra" },
+    { "term": "Session State", "definition": "Streamlit's mechanism for persisting values across user interactions (button clicks, slider changes). Required because Streamlit reruns the full script each time.", "category": "infra" }
+  ],
+
+  "tech_stack": [
+    { "component": "RL Algorithm", "technology": "PPO via Stable Baselines3" },
+    { "component": "Environment", "technology": "Gymnasium (formerly OpenAI Gym)" },
+    { "component": "Neural Network", "technology": "PyTorch (via SB3)" },
+    { "component": "Data Processing", "technology": "Pandas, NumPy" },
+    { "component": "Web App", "technology": "Streamlit" },
+    { "component": "Data Source", "technology": "MLB Statcast (2015-2025)" }
+  ]
+}
