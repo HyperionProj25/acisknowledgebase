@@ -22,7 +22,7 @@ function AnimatedDollar() {
     }
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, []);
+  }, [target]);
 
   return <span ref={ref}>${value}M</span>;
 }

@@ -19,8 +19,9 @@ export default function AnimatedCounter({ value, label }: AnimatedCounterProps) 
     // Parse numeric part
     const numericMatch = value.match(/[\d.]+/);
     if (!numericMatch) {
-      setDisplayValue(value);
-      return;
+      // Non-numeric values render as-is on the next frame
+      const frame = requestAnimationFrame(() => setDisplayValue(value));
+      return () => cancelAnimationFrame(frame);
     }
 
     const targetNum = parseFloat(numericMatch[0]);
