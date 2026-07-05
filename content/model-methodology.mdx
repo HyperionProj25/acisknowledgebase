@@ -7,14 +7,19 @@ audience: Technical
 summary: How the production system is built, trained, and retrained.
 ---
 
-This page documents the methodology behind <Fact k="production.system" />, the production system, and <Fact k="champion.model" />, the validated champion model.
+This page documents the methodology behind <Fact k="internal.model" />, the production system, and <Fact k="internal.champion" />, the scoring champion. ACIS is a post-game system.
 
-## Known scale (canonical)
+## Known scale (canonical, internal)
 
-- Algorithm family: <Fact k="production.algorithm" />
-- Feature count: <Fact k="production.featureRange" /> features
-- Training data: <Fact k="production.pitches" /> pitches, <Fact k="production.appearances" /> appearances
-- Latest champion retrain: <Fact k="champion.retrainDate" />
+- Production model: <Fact k="internal.model" />, scoring champion <Fact k="internal.champion" />
+- Champion feature count: <Fact k="internal.features" /> features
+- Platform model: <Fact k="internal.platformModel" />
+- Score scale: <Fact k="internal.scale" />, flag threshold <Fact k="internal.flagThreshold" />
+- Valid scoring window: <Fact k="internal.validWindow" />
+- Top drivers: <Fact k="internal.topDrivers" />
+- Training/evaluation corpus: <Fact k="corpus.pitches" /> pitches, <Fact k="corpus.appearances" /> appearances, <Fact k="corpus.coverage" />
+
+The corpus above is the training and evaluation data. It is not the validation cohort; the cohort study lives on the [Validation](/validation) page.
 
 ## Architecture
 
@@ -27,21 +32,22 @@ This page documents the methodology behind <Fact k="production.system" />, the p
 ## Feature families
 
 <TodoContent>
-  The feature families behind the <Fact k="production.featureRange" /> feature
-  set, at the family level. Individual feature definitions belong in the Data
-  Dictionary.
+  The feature families behind the champion's <Fact k="internal.features" />
+  features, at the family level, plus how the separate platform build relates.
+  Individual feature definitions belong in the Data Dictionary.
 </TodoContent>
 
 ## Training and retraining
 
 <TodoContent>
   Training data construction, train/holdout discipline, retrain cadence, and
-  what changed in the <Fact k="champion.retrain" />.
+  what changed in the latest retrain.
 </TodoContent>
 
 ## Champion selection
 
 <TodoContent>
-  How candidate models are compared and how <Fact k="champion.model" /> was
-  selected as champion.
+  How candidate models are compared and how <Fact k="internal.champion" /> was
+  selected as champion, including why the platform build is not the scoring
+  champion.
 </TodoContent>

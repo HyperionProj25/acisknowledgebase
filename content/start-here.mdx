@@ -11,7 +11,7 @@ Welcome to the internal knowledge base for the Arm Care Intelligence System (ACI
 
 ## The system at a glance
 
-The production system is <Fact k="production.system" /> (<Fact k="production.algorithm" />), and the validated champion model is <Fact k="champion.model" />: AUC <Fact k="champion.auc" /> on a <Fact k="champion.blindCohort" /> as of the <Fact k="champion.retrain" />. These figures come from the canonical facts file and update everywhere at once.
+ACIS is a post-game system. The production model is <Fact k="internal.model" />, and the scoring champion is <Fact k="internal.champion" />. The headline validation result: AUC <Fact k="validation.auc" /> on a <Fact k="validation.cohort" /> cohort of <Fact k="validation.cohortSize" /> arms (<Fact k="validation.years" />), up from <Fact k="validation.priorAuc" /> for the prior model. These figures come from the canonical facts file and update everywhere at once.
 
 <TodoContent>
   One-paragraph plain-language description of what ACIS does today, written and
@@ -38,6 +38,6 @@ The production system is <Fact k="production.system" /> (<Fact k="production.alg
 
 ## House rules
 
-- Validated numbers live only in `src/lib/canonical.ts` and render through the Fact component.
+- Validated numbers live only in `src/lib/canonical.ts` and render through the Fact component. Every fact carries an outbound flag; pages marked `audience: outbound` can only render outbound-approved facts.
 - A CI language lint blocks banned phrasing, em dashes, and retired numbers from live pages. See CLAUDE.md for the rules.
 - Every doc carries an owner, a status, and a last-reviewed date in its header.

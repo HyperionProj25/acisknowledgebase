@@ -13,6 +13,11 @@ This page is the guardrail for anything outward-facing: the approved way to desc
 
 A CI lint (`scripts/lint-language.mjs`) blocks banned framing from every live page of this knowledge base, so the build itself enforces the rule. The banned list and its rationale are documented in CLAUDE.md at the repo root.
 
+Two standing rules beyond the lint:
+
+- ACIS is a post-game system and is always described that way. It is never described as a real-time or in-game system.
+- Outbound material may only use facts flagged `outbound: true` in `src/lib/canonical.ts`. Pages marked `audience: outbound` enforce this at build time and automatically use plain-language labels where they exist (for example, the AUC renders as its approved plain-language label).
+
 <TodoContent>
   The full approved-language guide: the do-say and do-not-say list with
   approved substitutions, written and signed off by leadership. The CI lint

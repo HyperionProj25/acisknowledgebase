@@ -9,29 +9,53 @@ summary: How ACIS performance is measured and the current validated results.
 
 This page is the canonical record of how the Arm Care Intelligence System (ACIS) is validated and what the current numbers are. Validation results from the retired proof of concept live in the [archive](/archive/validation) and are not current claims.
 
-## Current validated results (canonical)
+## Headline study: the <Fact k="internal.champion" /> cohort validation
 
 | Measure | Value |
 | --- | --- |
-| Champion model | <Fact k="champion.model" /> |
-| AUC | <Fact k="champion.auc" /> |
-| Blind evaluation | <Fact k="champion.blindCohort" /> |
-| As of | <Fact k="champion.retrain" /> |
-| Validated pool | <Fact k="validatedPool.pitchers" /> pitchers, <Fact k="validatedPool.seasons" /> |
-| In-season catch rate | <Fact k="validatedPool.inSeasonCatchRate" /> |
+| AUC | <Fact k="validation.auc" /> |
+| Prior model AUC | <Fact k="validation.priorAuc" /> |
+| Cohort design | <Fact k="validation.cohort" /> |
+| Cohort size | <Fact k="validation.cohortSize" /> arms (<Fact k="validation.cases" /> cases, <Fact k="validation.controls" /> controls) |
+| Years | <Fact k="validation.years" /> |
+| Signal | <Fact k="validation.signal" /> |
+| Box-score correlation | <Fact k="validation.boxScoreCorr" /> |
+| Early-season stability | <Fact k="validation.earlySeason" /> |
+| Operating point | <Fact k="validation.operatingPoint" /> |
+
+## Internal reference (not for outbound use)
+
+| Measure | Value |
+| --- | --- |
+| Production model | <Fact k="internal.model" /> |
+| Scoring champion | <Fact k="internal.champion" /> |
+| Score scale | <Fact k="internal.scale" /> (flag at <Fact k="internal.flagThreshold" />) |
+| Valid scoring window | <Fact k="internal.validWindow" /> |
+
+## Prior study (internal history)
+
+Retired from outbound in favor of the cohort AUC framing above.
+
+| Measure | Value |
+| --- | --- |
+| Pool | <Fact k="priorStudy.pool" /> pitchers |
+| Catches | <Fact k="priorStudy.catches" /> |
+| In-season catch rate | <Fact k="priorStudy.inSeason" /> |
+| Raw catch rate | <Fact k="priorStudy.raw" /> |
 
 ## Methodology
 
 <TodoContent>
-  How the blind cohort evaluation is designed, how the validated pool is
-  constructed, and how in-season catch rate is defined and measured. This
-  section must be written by the team; the terms are seeded in the Glossary
-  with definitions pending.
+  How the cohort study is designed (blinding, workload matching, holdout
+  discipline), how cases and controls are selected, what counts as an event,
+  and how the operating point is chosen. This section must be written by the
+  team; the terms are seeded in the Glossary with definitions pending.
 </TodoContent>
 
 ## Interpretation and limits
 
 <TodoContent>
   What these results do and do not support, in approved language. Pair with
-  GTM Rails before using any of this externally.
+  GTM Rails before using any of this externally; only outbound-flagged facts
+  may appear in outbound material.
 </TodoContent>

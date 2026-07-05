@@ -18,7 +18,9 @@ The knowledge base is in a Phase 1 rebuild state: the information architecture, 
 ## Content Model
 - Every live doc is one MDX file in `content/` with required frontmatter: `title`, `owner`, `last_reviewed`, `status`, `audience`.
 - `src/lib/docs.ts` loads and parses the MDX files. `src/app/[slug]/page.tsx` routes them; `content/start-here.mdx` renders at `/`.
-- **Canonical numbers live in `src/lib/canonical.ts` and only there.** Docs reference them with the `<Fact k="..." />` MDX component. Never type a validated metric (AUC, cohort size, catch rate, data volumes) directly into a doc or component; update it once in canonical.ts and it propagates.
+- **Canonical numbers live in `src/lib/canonical.ts` and only there.** Docs reference them with the `<Fact k="group.key" />` MDX component. Never type a validated metric (AUC, cohort size, catch rate, data volumes) directly into a doc or component; update it once in canonical.ts and it propagates.
+- Canonical facts are grouped so magnitudes never get fused: `validation` (the SP12 252-arm cohort study, the headline), `corpus` (training/evaluation data, NOT the cohort), `internal` (never outbound), and `priorStudy` (retired history, internal only).
+- Every fact carries `outbound: true|false` and optionally an `outboundLabel`. On pages with `audience: outbound` in frontmatter, `<Fact>` renders the outboundLabel when present and the build FAILS if the page references an `outbound: false` fact.
 - Do not hardcode content strings in components. Components render what docs and canonical.ts provide.
 - The old `docs/content.json` JSON-as-CMS model is retired. It survives only as `src/lib/archive/poc-content.json`, feeding the archived proof-of-concept pages. Do not add new content to it.
 
@@ -67,6 +69,7 @@ The `/archive` section preserves the retired reinforcement-learning proof of con
 
 ## Important Notes
 - ACIS = Arm Care Intelligence System. Use the full name on first mention per page, then "ACIS".
+- ACIS is a post-game system. Never describe it as real-time or in-game; that framing belongs only to the archived POC.
 - Chase Spivey = "Founder & CEO", Sheldon McClelland = "Founder & COO" (never other titles)
 - This is a Wyoming C-Corporation
 - Never use em dashes in any copy

@@ -46,10 +46,13 @@ Nine routed sections, all navigable from the fixed top nav:
 
 - One MDX file per doc in `content/`, loaded by `src/lib/docs.ts` (gray-matter frontmatter parsing, next-mdx-remote rendering).
 - Required frontmatter on every doc: `title`, `owner`, `last_reviewed`, `status` (`stub` | `draft` | `reviewed`), `audience`.
-- Canonical numbers are never typed into docs. They live in `src/lib/canonical.ts` and render through the `<Fact k="dot.path" />` MDX component. Current seed:
-  - Champion model: SP12, AUC 0.80, 252-arm blind cohort, June 2026 retrain
-  - Production system: DADEP 2.0, XGBoost, 43-63 features, 10.7M pitches, 311K+ appearances
-  - Validated pool: 178 pitchers, 2023-2025, 84.0% in-season catch rate
+- Canonical numbers are never typed into docs. They live in `src/lib/canonical.ts` and render through the `<Fact k="group.key" />` MDX component. Facts are grouped so magnitudes never fuse downstream:
+  - `validation`: the SP12 252-arm cohort study (the outbound headline): AUC, prior AUC, cohort design and composition, years, signal, box-score correlation, early-season stability, operating point
+  - `corpus`: training/evaluation data (10.7M pitches, 311K+ appearances, MLB and MiLB coverage). The corpus is NOT the validation cohort.
+  - `internal`: never outbound (model and champion names, feature counts, score scale, flag threshold, valid window, top drivers)
+  - `priorStudy`: the retired 178-pitcher study, internal history only
+- Every fact carries `outbound: true|false` plus an optional `outboundLabel`. Pages with `audience: outbound` render outbound labels where present, and the build fails if such a page references an internal-only fact.
+- Product line everywhere: ACIS is a post-game system, not real-time.
 - `<TodoContent>` marks every pending content block so stubs are visible on the page, not silent.
 - The retired JSON-as-CMS file exists only as `src/lib/archive/poc-content.json` for the archived POC pages.
 

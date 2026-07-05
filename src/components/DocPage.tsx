@@ -3,8 +3,6 @@ import type { Doc, DocStatus } from "@/lib/docs";
 import Fact from "@/components/mdx/Fact";
 import TodoContent from "@/components/mdx/TodoContent";
 
-const mdxComponents = { Fact, TodoContent };
-
 const STATUS_STYLES: Record<DocStatus, string> = {
   stub: "bg-warning/10 text-warning border-warning/30",
   draft: "bg-brand-gold/10 text-brand-gold border-brand-gold/30",
@@ -14,6 +12,13 @@ const STATUS_STYLES: Record<DocStatus, string> = {
 export default function DocPage({ doc }: { doc: Doc }) {
   const fm = doc.frontmatter;
   const statusStyle = STATUS_STYLES[fm.status] ?? STATUS_STYLES.stub;
+
+  // Fact needs the page audience so outbound pages get outbound labels and
+  // fail the build on internal-only facts.
+  const mdxComponents = {
+    TodoContent,
+    Fact: (props: { k: string }) => <Fact {...props} audience={fm.audience} />,
+  };
 
   return (
     <article className="max-w-[860px] mx-auto px-4 sm:px-6 py-14">
