@@ -1,61 +1,129 @@
 ---
 title: Validation
-owner: "Unassigned (assign in Phase 2)"
+owner: Chase Spivey
 last_reviewed: "2026-07-05"
-status: stub
-audience: All
-summary: How ACIS performance is measured and the current validated results.
+status: draft
+audience: internal
 ---
 
-This page is the canonical record of how the Arm Care Intelligence System (ACIS) is validated and what the current numbers are. Validation results from the retired proof of concept live in the [archive](/archive/validation) and are not current claims.
+{/* Numbers not yet in canonical (injury-type, misses, specificity, gray zone) are
+    deliberately prose; promote to canonical only if they need to appear on more
+    than one page. No em dashes anywhere, per the language lint. */}
 
-## Headline study: the <Fact k="internal.champion" /> cohort validation
+**The short version:** ACIS has two validation results, and they answer two different
+questions. Keep them separate. One measures how well the system tells arms that broke
+down apart from arms that did not (discrimination, reported as AUC). The other measures
+how many injured pitchers it flagged in time (catch rate). Fusing them is the most common
+mistake people make with these numbers.
 
-| Measure | Value |
-| --- | --- |
-| AUC | <Fact k="validation.auc" /> |
-| Prior model AUC | <Fact k="validation.priorAuc" /> |
-| Cohort design | <Fact k="validation.cohort" /> |
-| Cohort size | <Fact k="validation.cohortSize" /> arms (<Fact k="validation.cases" /> cases, <Fact k="validation.controls" /> controls) |
-| Years | <Fact k="validation.years" /> |
-| Signal | <Fact k="validation.signal" /> |
-| Box-score correlation | <Fact k="validation.boxScoreCorr" /> |
-| Early-season stability | <Fact k="validation.earlySeason" /> |
-| Operating point | <Fact k="validation.operatingPoint" /> |
+---
 
-## Internal reference (not for outbound use)
+## Study 1: Blind-cohort discrimination (the headline)
 
-| Measure | Value |
-| --- | --- |
-| Production model | <Fact k="internal.model" /> |
-| Scoring champion | <Fact k="internal.champion" /> |
-| Score scale | <Fact k="internal.scale" /> (flag at <Fact k="internal.flagThreshold" />) |
-| Valid scoring window | <Fact k="internal.validWindow" /> |
+This is the current headline result and the framing all outbound materials use.
 
-## Prior study (internal history)
+SP12 scored a **<Fact k="validation.cohort" /> cohort of <Fact k="validation.cohortSize" /> arms**: **<Fact k="validation.cases" />** that
+landed on the injured list with an arm injury and **<Fact k="validation.controls" />** workload-matched healthy
+controls, drawn from 2023 to 2025, sourced from the MLB Stats API, and never seen in
+training. "Held-out" means these arms were excluded from the model's training data, so it
+scored them cold. "Workload-matched" means the healthy controls were matched to the
+injured arms on workload, so the comparison is not just "busy pitchers versus idle ones."
 
-Retired from outbound in favor of the cohort AUC framing above.
+- **AUC <Fact k="validation.auc" />**, up from **<Fact k="validation.priorAuc" />** on the prior model (the "Original Model") on the same
+  cohort. AUC of 0.80 means that if you draw one injured arm and one healthy arm at
+  random, the model gives the injured one a higher score about four times out of five.
+- **Sustained elevation is the signal, not a single spike.** The thing that separates the
+  two groups is the *share* of a pitcher's starts sitting at or above the flag line, not
+  whether they crossed it once. Single-crossing detection saturates near 100% sensitivity
+  at almost zero specificity, so it was retired in favor of sustained elevation.
+- **The signal is invisible to the box score.** Within-pitcher correlation between the
+  ACIS score and Game Score, strikeout rate, and walk rate is **<Fact k="validation.boxScoreCorr" />**.
+  This is the "why your performance analytics cannot already see this" argument.
+- **It survives the season-timing test.** SP12 **<Fact k="validation.earlySeason" />**.
+  It is reading the arm, not the calendar.
+- **Honest operating point:** at the balanced threshold, **<Fact k="validation.operatingPoint" />**,
+  which means about one in three events is still missed. The operating point was tuned
+  in-sample and should be confirmed on a future season.
 
-| Measure | Value |
-| --- | --- |
-| Pool | <Fact k="priorStudy.pool" /> pitchers |
-| Catches | <Fact k="priorStudy.catches" /> |
-| In-season catch rate | <Fact k="priorStudy.inSeason" /> |
-| Raw catch rate | <Fact k="priorStudy.raw" /> |
+---
 
-## Methodology
+## Study 2: In-season catch rate (prior-model era)
 
-<TodoContent>
-  How the cohort study is designed (blinding, workload matching, holdout
-  discipline), how cases and controls are selected, what counts as an event,
-  and how the operating point is chosen. This section must be written by the
-  team; the terms are seeded in the Glossary with definitions pending.
-</TodoContent>
+Internal history. This is the earlier catch-rate framing, retired from outbound materials
+in favor of the 252-cohort AUC result above. It is documented here because it is real, it
+is the ground-truth lens the champion was built against, and the injury-type breakdown
+below is still the clearest evidence that the signal is biomechanical rather than noise.
 
-## Interpretation and limits
+**One numerator, two denominators.** This is the part people get wrong:
 
-<TodoContent>
-  What these results do and do not support, in approved language. Pair with
-  GTM Rails before using any of this externally; only outbound-flagged facts
-  may appear in outbound material.
-</TodoContent>
+- **<Fact k="priorStudy.catches" /> catches** = injured pitchers flagged at or above the threshold before their IL date.
+- **In-season rate = <Fact k="priorStudy.catches" /> / 156 = <Fact k="priorStudy.inSeason" />.** The denominator excludes cases ACIS had no
+  regular-season data to score.
+- **Raw rate = <Fact k="priorStudy.catches" /> / <Fact k="priorStudy.pool" /> = <Fact k="priorStudy.raw" />.** The denominator includes all <Fact k="priorStudy.pool" /> injured cases, even
+  the **22** with zero in-season data (spring-training or pre-season IL). So 178 minus 156
+  equals 22 unscoreable cases. <Fact k="priorStudy.inSeason" /> is the operating-window number; <Fact k="priorStudy.raw" /> is the floor.
+
+**Definitions (locked, pre-registered):**
+
+- **Threshold of record:** a score at or above **41** on the 0 to 100 scale counts as a flag.
+- **Catch:** flagged at any valid start before the IL date.
+- **Valid window:** begins at each pitcher's **5th start** (the chronic-workload baseline
+  needs roughly four starts to form) and runs through the first 65% of the season. Reads
+  before the 5th start are pre-baseline and are never counted as misses.
+
+**Catch rate by injury type (the hard-to-fake result).** This uses a stricter, smaller
+pool of **77** verified-injured pitchers with a recorded injury type (2023 and 2025; 2024
+is excluded because injury type was not recorded that season). Do not try to reconcile 77
+against the 178 headline. They are different cuts with different inclusion rules. After
+removing operating-window artifacts, ACIS caught **100% of scoreable UCL / Tommy John**
+cases and **100% of scoreable flexor / forearm** cases, the canonical cumulative-overuse
+medial-elbow injuries. The gradient (high on workload-mediated elbow injuries, low on
+acute and non-elbow ones) is what argues against a "this is just a velocity proxy"
+explanation.
+
+**Genuine misses.** Across 2023 and 2025 there were **3** genuine misses (cases with valid
+in-window data that still were not flagged): an acute bone bruise, a teres strain, and a
+shoulder strain. None were workload-mediated medial-elbow injuries. The misses landing in
+non-cumulative mechanisms is itself evidence for the fatigue thesis.
+
+---
+
+## Soft spots (state these before an analyst finds them)
+
+- **Specificity is the weak point.** Pooled specificity is **46.9%**, and **29.6%** in
+  2025. The system over-flags healthy pitchers. Never present catch rate as a standalone
+  headline; always pair it with specificity and confidence intervals.
+- **Acute strains are out of the wheelhouse.** Lat and teres catch rate is low (29% raw,
+  50% after removing artifacts). These are acute events, not cumulative fatigue. Volunteer it.
+- **A 41 to 69 gray zone exists** where injured and healthy score distributions overlap.
+  Magnitude alone cannot separate arms in that band.
+- **Season-progress calendar artifact.** The season-progress feature inflates scores early
+  and collapses them late, independent of arm health. The 5th-start-to-65% valid window is
+  what contains it, which is why scoring outside that window is out of scope.
+- **Do not trust the engine's text labels.** The engine's risk-level labels do not match
+  the published five-tier legend. Always analyze by the score number.
+
+---
+
+## How the two studies relate (provenance)
+
+- **Research corpus** (model development): **<Fact k="corpus.pitches" />** tracked pitches across **11 MLB
+  seasons** plus AAA, about **<Fact k="corpus.appearances" />** pitcher-game appearances, evaluated with
+  leave-season-out cross-validation. This produces an out-of-fold AUC of about **0.72**.
+  This is the development number.
+- **Blind validation cohort** (out-of-sample test): the **<Fact k="validation.cohortSize" />** held-out arms above,
+  AUC **<Fact k="validation.auc" />**. This is the validation number.
+
+Different magnitudes, different jobs. The corpus tells you how the model was built and
+tuned. The cohort tells you how it did on arms it had never seen.
+
+---
+
+## Open verify items
+
+- Exact champion development AUC: sources read 0.720, 0.726, and 0.727. All round to about
+  0.72, but pin the precise figure before it is quoted externally. This is a different
+  number from <Fact k="validation.priorAuc" /> (the prior model on the cohort); do not fuse them.
+- Exact 2024 cohort size (approximately 73) and the precise per-season raw denominators.
+- The 252-cohort operating point was tuned in-sample; confirm on a future season before
+  presenting it as a production threshold.
