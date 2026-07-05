@@ -1,90 +1,73 @@
-# ACIS Knowledge Base - Interactive Training Portal
+# ACIS Knowledge Base - Internal Training and Reference Portal
 
 ## Project Overview
-This is an interactive internal knowledge base for Baseline Analytics' Arm Care Intelligence System (ACIS). It serves as a training and onboarding tool for company leadership (Chase Spivey - Founder & CEO, Sheldon McClelland - Founder & COO, Jeff Newman - Executive Chairman).
+This is the internal knowledge base for Baseline Analytics' Arm Care Intelligence System (ACIS). It is the onboarding and reference resource for the team and leadership (Chase Spivey - Founder & CEO, Sheldon McClelland - Founder & COO, Jeff Newman - Executive Chairman).
 
-The site makes ACIS's technical foundation tangible through interactive elements: animated data flow diagrams, a reward function explorer with live sliders, clickable state vector cards, searchable glossary, and validation dashboards.
+The knowledge base is in a Phase 1 rebuild state: the information architecture, content model, CI guardrails, auth, and search are in place, but most section bodies are TODO(content) stubs awaiting Phase 2 content authoring. Do not invent technical content to fill a stub. If a fact is not in `src/lib/canonical.ts` or supplied by the team, leave the stub in place.
 
-## Tech Stack
-- **Framework:** Next.js 14+ (App Router)
-- **Styling:** Tailwind CSS
+## Tech Stack (actual, verified)
+- **Framework:** Next.js 16 (App Router, `src/` directory layout)
+- **Styling:** Tailwind CSS v4 (tokens defined via `@theme` in `src/app/globals.css`), dark theme
+- **Typography:** GT America and GT America Mono, self-hosted in `public/fonts/`
 - **Animations:** Framer Motion
-- **Charts:** Recharts
-- **Deployment:** Vercel
-- **No backend required** - all content is static/client-side
+- **Content:** Per-document MDX files in `content/` rendered with next-mdx-remote
+- **Search:** FlexSearch client-side over a static index generated at build time
+- **Auth:** PIN login that sets an HMAC-signed session cookie (see Auth below)
+- **Deployment:** Netlify (`netlify.toml`, `@netlify/plugin-nextjs`). Not Vercel.
+
+## Content Model
+- Every live doc is one MDX file in `content/` with required frontmatter: `title`, `owner`, `last_reviewed`, `status`, `audience`.
+- `src/lib/docs.ts` loads and parses the MDX files. `src/app/[slug]/page.tsx` routes them; `content/start-here.mdx` renders at `/`.
+- **Canonical numbers live in `src/lib/canonical.ts` and only there.** Docs reference them with the `<Fact k="..." />` MDX component. Never type a validated metric (AUC, cohort size, catch rate, data volumes) directly into a doc or component; update it once in canonical.ts and it propagates.
+- Do not hardcode content strings in components. Components render what docs and canonical.ts provide.
+- The old `docs/content.json` JSON-as-CMS model is retired. It survives only as `src/lib/archive/poc-content.json`, feeding the archived proof-of-concept pages. Do not add new content to it.
+
+## Language Rules (enforced by CI)
+`scripts/lint-language.mjs` runs before every build (locally, in GitHub Actions, and on Netlify) and fails the build on violations in `content/` and non-archive `src/` code:
+- Never the phrases "injury prediction" or "injury prevention", or close variants such as "predicts injuries" or "preventing injury". ACIS is described in workload and arm care terms, never as predicting or preventing injuries.
+- Never use em dashes in any copy.
+- Never present retired proof-of-concept numbers or tech as current: the old pitch/at-bat volumes, the old reward and pull-rate metrics, and PPO / SB3 / Gymnasium / Streamlit as current technology. The archive keeps them as history; live pages must not.
+- Archive paths (`src/app/archive/`, `src/components/archive/`, `src/lib/archive/`) are exempt because they are a preserved historical record behind a banner.
+
+Run `npm run lint:language` before committing content changes.
+
+## Sections (information architecture)
+1. Start Here (`/`) - orientation and role-based reading paths
+2. Product Overview (`/product-overview`)
+3. Model Methodology (`/model-methodology`)
+4. Validation (`/validation`)
+5. Data Dictionary (`/data-dictionary`)
+6. Hitting & Biomechanics (`/hitting-biomechanics`)
+7. GTM Rails (`/gtm-rails`)
+8. Glossary (`/glossary`)
+9. Archive (`/archive`) - the March 2026 RL proof of concept, preserved read-only behind a persistent banner
+
+## Archive Policy
+The `/archive` section preserves the retired reinforcement-learning proof of concept (pipeline explorer, state vector, reward explorer, training curve, POC validation, POC walkthrough, POC glossary and limitations). It exists as history, is clearly bannered as not the current system, and should not be extended or updated except to fix breakage. Reusable interaction patterns (AnimatedCounter, WalkthroughShell, ProgressBar, SceneNavigation, SceneRenderer) stay in live `src/components/` as templates for future content.
+
+## Auth
+- `/api/auth` verifies the PIN from the `SITE_PIN` environment variable and sets an HMAC-SHA256 signed, expiring session cookie (`acis-auth`).
+- `src/middleware.ts` verifies the signature and expiry with Web Crypto on every request (edge-safe; do not add `runtime = "nodejs"` directives, they crash Netlify edge functions).
+- Signing secret: `AUTH_SECRET` env var, falling back to `SITE_PIN` if unset. Set both in Netlify.
+- Token helpers live in `src/lib/auth-token.ts`.
 
 ## Brand Identity
-- **Primary brand color (Sunglow Gold):** #F5A623
-- **Dark navy:** #1A2332
-- **Medium gray (body text):** #4A5568
-- **Light background:** #F7FAFC
-- **White:** #FFFFFF
-- **Success green:** #38A169
-- **Warning yellow:** #ECC94B
-- **Danger red:** #E53E3E
-- Refer to `Baseline _ Source Files/` in the project root for any brand assets (logos, fonts, etc.) that Chase has added. Use these as the primary reference for visual identity.
-- Typography: clean sans-serif (Inter or system font stack)
-- Design tone: premium, data-forward, sports-tech. Not playful, not corporate-stuffy. Think Bloomberg Terminal meets ESPN.
-
-## Content Source
-All ACIS content is in `docs/content.json`. This is the single source of truth for all text, definitions, data values, and structured content displayed in the app. Do not hardcode content strings in components -- pull from this file or a constants file derived from it.
-
-## Architecture Principles
-- App Router (`/app` directory)
-- Single-page feel with smooth scroll navigation between sections, but use Next.js routes for each major section so URLs are shareable
-- All interactive widgets are client components (`"use client"`)
-- No authentication required (internal tool, shared via URL)
-- Mobile-responsive but optimized for desktop (primary use case is laptop/desktop review)
-- Animations should be tasteful and purposeful, not decorative. Every animation should help the user understand something.
-
-## Key Interactive Elements
-1. **Data Flow Pipeline** - Animated, clickable node graph showing Statcast → preprocessing → features → environment → training → model → app
-2. **State Vector Explorer** - 6 interactive cards, one per feature, with expand/collapse detail
-3. **Reward Function Explorer** - 5 sliders controlling reward weights with a live personality gauge and outcome simulation
-4. **Training Curve Visualization** - Animated Recharts line chart showing reward improvement over 500K timesteps
-5. **Validation Dashboard** - 3 animated metric cards with progress indicators
-6. **Glossary** - Searchable, filterable, 24 terms
-
-## File Structure Convention
-```
-app/
-  layout.tsx          # Root layout with nav, brand header
-  page.tsx            # Home/hero + overview
-  how-it-works/
-    page.tsx          # Data flow pipeline interactive
-  state-vector/
-    page.tsx          # 6-feature explorer
-  reward-function/
-    page.tsx          # Slider explorer
-  validation/
-    page.tsx          # Results dashboard + training curve
-  glossary/
-    page.tsx          # Searchable glossary
-  limitations/
-    page.tsx          # Known limitations + roadmap
-components/
-  Navigation.tsx
-  DataFlowPipeline.tsx
-  StateVectorCard.tsx
-  RewardExplorer.tsx
-  TrainingCurve.tsx
-  ValidationCard.tsx
-  GlossarySearch.tsx
-  ...
-lib/
-  content.ts          # Typed content loader from content.json
-  constants.ts        # Brand colors, config values
-```
+- Primary brand color (Sunglow Gold): #F5A623
+- Dark surfaces: #0D0D0D base, #161616 card, #1E1E1E elevated
+- Navy: #1A2332, success green: #38A169, warning yellow: #ECC94B, danger red: #E53E3E
+- Dark theme throughout. Typography is GT America (sans) and GT America Mono (code/data).
+- Design tone: premium, data-forward, sports-tech. Not playful, not corporate-stuffy.
 
 ## Commands
-- `npm run dev` - local development
-- `npm run build` - production build
-- `npm run lint` - linting
-- Deploy via `vercel` CLI or Vercel dashboard (connect GitHub repo)
+- `npm run dev` - local development (builds the search index first)
+- `npm run build` - language lint, search index, then production build
+- `npm run lint` - ESLint
+- `npm run lint:language` - the CI language lint on its own
+- Deploy: push to the connected branch; Netlify builds with `npm run build`
 
 ## Important Notes
-- ACIS = Arm Care Intelligence System. Always use full name on first mention per page, then "ACIS" subsequently.
-- The system has two layers: "Longitudinal Layer" (season-long trends) and "Real-Time Layer" (in-game at-bat decisions). The Real-Time Layer is the focus of this knowledge base.
+- ACIS = Arm Care Intelligence System. Use the full name on first mention per page, then "ACIS".
 - Chase Spivey = "Founder & CEO", Sheldon McClelland = "Founder & COO" (never other titles)
 - This is a Wyoming C-Corporation
 - Never use em dashes in any copy
+- Content stubs are marked with the `<TodoContent>` component. Filling them requires facts from the team, not inference.
