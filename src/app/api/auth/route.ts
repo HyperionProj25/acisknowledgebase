@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { createSessionToken } from "@/lib/auth-token";
+
+const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
 export async function POST(request: Request) {
   const { pin } = await request.json();
@@ -15,12 +18,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Incorrect PIN" }, { status: 401 });
   }
 
+  const token = await createSessionToken(SESSION_MAX_AGE_SECONDS);
   const response = NextResponse.json({ success: true });
-  response.cookies.set("acis-auth", "authenticated", {
+  response.cookies.set("acis-auth", token, {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 30, // 30 days
+    maxAge: SESSION_MAX_AGE_SECONDS,
     path: "/",
   });
 
