@@ -10,6 +10,8 @@ interface SceneNavigationProps {
   onPrev: () => void;
   onNext: () => void;
   onJump: (index: number) => void;
+  ctaHref?: string;
+  ctaLabel?: string;
 }
 
 export default function SceneNavigation({
@@ -18,6 +20,8 @@ export default function SceneNavigation({
   onPrev,
   onNext,
   onJump,
+  ctaHref = "/",
+  ctaLabel = "Explore",
 }: SceneNavigationProps) {
   const isFirst = currentScene === 0;
   const isLast = currentScene === totalScenes - 1;
@@ -59,10 +63,10 @@ export default function SceneNavigation({
         {/* Next button or CTA */}
         {isLast ? (
           <Link
-            href="/how-it-works"
+            href={ctaHref}
             className="h-10 px-4 rounded-full bg-brand-gold text-surface-base text-sm font-semibold flex items-center gap-1.5 hover:bg-brand-gold-light transition-colors shrink-0"
           >
-            Explore
+            {ctaLabel}
             <ChevronRight size={16} />
           </Link>
         ) : (

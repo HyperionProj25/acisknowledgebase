@@ -6,13 +6,20 @@ interface ProgressBarProps {
   currentScene: number;
   totalScenes: number;
   sceneTitle: string;
+  /** Tailwind top-* class; lets pages with extra fixed chrome (e.g. the archive banner) push the bar down */
+  topClass?: string;
 }
 
-export default function ProgressBar({ currentScene, totalScenes, sceneTitle }: ProgressBarProps) {
+export default function ProgressBar({
+  currentScene,
+  totalScenes,
+  sceneTitle,
+  topClass = "top-16",
+}: ProgressBarProps) {
   const progress = ((currentScene + 1) / totalScenes) * 100;
 
   return (
-    <div className="fixed top-16 left-0 right-0 z-40">
+    <div className={`fixed ${topClass} left-0 right-0 z-40`}>
       <div className="h-[3px] bg-white/5">
         <motion.div
           className="h-full bg-gradient-to-r from-brand-gold-dark via-brand-gold to-brand-gold-light"

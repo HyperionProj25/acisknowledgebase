@@ -8,9 +8,18 @@ import SceneRenderer from "./SceneRenderer";
 interface WalkthroughShellProps {
   sceneTitles: string[];
   children: (sceneIndex: number) => ReactNode;
+  ctaHref?: string;
+  ctaLabel?: string;
+  progressTopClass?: string;
 }
 
-export default function WalkthroughShell({ sceneTitles, children }: WalkthroughShellProps) {
+export default function WalkthroughShell({
+  sceneTitles,
+  children,
+  ctaHref,
+  ctaLabel,
+  progressTopClass,
+}: WalkthroughShellProps) {
   const [currentScene, setCurrentScene] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const totalScenes = sceneTitles.length;
@@ -59,6 +68,7 @@ export default function WalkthroughShell({ sceneTitles, children }: WalkthroughS
         currentScene={currentScene}
         totalScenes={totalScenes}
         sceneTitle={sceneTitles[currentScene]}
+        topClass={progressTopClass}
       />
       <div className="pt-8 pb-16">
         <SceneRenderer sceneKey={currentScene} direction={direction}>
@@ -71,6 +81,8 @@ export default function WalkthroughShell({ sceneTitles, children }: WalkthroughS
         onPrev={goPrev}
         onNext={goNext}
         onJump={jumpTo}
+        ctaHref={ctaHref}
+        ctaLabel={ctaLabel}
       />
     </div>
   );
