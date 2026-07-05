@@ -1,0 +1,43 @@
+---
+title: Start Here
+owner: "Unassigned (assign in Phase 2)"
+last_reviewed: "2026-07-05"
+status: stub
+audience: All
+summary: Orientation for the ACIS knowledge base and where to begin by role.
+---
+
+Welcome to the internal knowledge base for the Arm Care Intelligence System (ACIS) by Baseline Analytics. This is the team's source of truth for what ACIS is, how it is built and validated, and how we talk about it.
+
+## The system at a glance
+
+The production system is <Fact k="production.system" /> (<Fact k="production.algorithm" />), and the validated champion model is <Fact k="champion.model" />: AUC <Fact k="champion.auc" /> on a <Fact k="champion.blindCohort" /> as of the <Fact k="champion.retrain" />. These figures come from the canonical facts file and update everywhere at once.
+
+<TodoContent>
+  One-paragraph plain-language description of what ACIS does today, written and
+  approved by the team. Do not fill this by inference from older material.
+</TodoContent>
+
+## Reading paths
+
+<TodoContent>
+  Role-based reading paths belong here in Phase 2: what a technical hire, a GTM
+  hire, and an advisor or partner-facing teammate should read, in what order.
+</TodoContent>
+
+## Sections
+
+- [Product Overview](/product-overview): what ACIS is and who it serves
+- [Model Methodology](/model-methodology): how the production system is built and retrained
+- [Validation](/validation): how performance is measured and what the current numbers are
+- [Data Dictionary](/data-dictionary): every production feature, defined once
+- [Hitting & Biomechanics](/hitting-biomechanics): work beyond pitcher workload
+- [GTM Rails](/gtm-rails): approved language, positioning, and partnership status
+- [Glossary](/glossary): shared vocabulary
+- [Archive](/archive): the March 2026 proof of concept, preserved as history. Not the current system.
+
+## House rules
+
+- Validated numbers live only in `src/lib/canonical.ts` and render through the Fact component.
+- A CI language lint blocks banned phrasing, em dashes, and retired numbers from live pages. See CLAUDE.md for the rules.
+- Every doc carries an owner, a status, and a last-reviewed date in its header.

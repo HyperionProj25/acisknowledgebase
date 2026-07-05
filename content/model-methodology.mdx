@@ -1,0 +1,47 @@
+---
+title: Model Methodology
+owner: "Unassigned (assign in Phase 2)"
+last_reviewed: "2026-07-05"
+status: stub
+audience: Technical
+summary: How the production system is built, trained, and retrained.
+---
+
+This page documents the methodology behind <Fact k="production.system" />, the production system, and <Fact k="champion.model" />, the validated champion model.
+
+## Known scale (canonical)
+
+- Algorithm family: <Fact k="production.algorithm" />
+- Feature count: <Fact k="production.featureRange" /> features
+- Training data: <Fact k="production.pitches" /> pitches, <Fact k="production.appearances" /> appearances
+- Latest champion retrain: <Fact k="champion.retrainDate" />
+
+## Architecture
+
+<TodoContent>
+  Description of the model architecture and prediction target(s), written by
+  the modeling team. Nothing here may be inferred from the archived POC; the
+  production system is a different approach.
+</TodoContent>
+
+## Feature families
+
+<TodoContent>
+  The feature families behind the <Fact k="production.featureRange" /> feature
+  set, at the family level. Individual feature definitions belong in the Data
+  Dictionary.
+</TodoContent>
+
+## Training and retraining
+
+<TodoContent>
+  Training data construction, train/holdout discipline, retrain cadence, and
+  what changed in the <Fact k="champion.retrain" />.
+</TodoContent>
+
+## Champion selection
+
+<TodoContent>
+  How candidate models are compared and how <Fact k="champion.model" /> was
+  selected as champion.
+</TodoContent>

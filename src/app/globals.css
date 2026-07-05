@@ -202,3 +202,90 @@ input[type="range"]::-moz-range-thumb {
   height: 2px;
   background: linear-gradient(90deg, transparent, #F5A623, transparent);
 }
+
+/* Prose styling for MDX docs (no typography plugin; dark theme) */
+.doc-prose {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+.doc-prose h2 {
+  color: #FFFFFF;
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 2.25rem 0 0.75rem;
+}
+.doc-prose h3 {
+  color: #FFFFFF;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 1.75rem 0 0.5rem;
+}
+.doc-prose p {
+  margin: 0.75rem 0;
+}
+.doc-prose a {
+  color: #F5A623;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(245, 166, 35, 0.35);
+}
+.doc-prose a:hover {
+  color: #FBD38D;
+  border-bottom-color: #FBD38D;
+}
+.doc-prose ul,
+.doc-prose ol {
+  margin: 0.75rem 0;
+  padding-left: 1.4rem;
+}
+.doc-prose ul {
+  list-style: disc;
+}
+.doc-prose ol {
+  list-style: decimal;
+}
+.doc-prose li {
+  margin: 0.35rem 0;
+}
+.doc-prose li::marker {
+  color: rgba(245, 166, 35, 0.6);
+}
+.doc-prose code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+  color: #FBD38D;
+}
+.doc-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.9rem;
+}
+.doc-prose th {
+  text-align: left;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+.doc-prose td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.doc-prose blockquote {
+  border-left: 3px solid rgba(245, 166, 35, 0.5);
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: rgba(255, 255, 255, 0.5);
+}
+.doc-prose hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 2rem 0;
+}

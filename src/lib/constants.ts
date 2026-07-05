@@ -18,14 +18,15 @@ export const COLORS = {
 } as const;
 
 export const NAV_ITEMS = [
-  { label: 'Overview', href: '/' },
-  { label: 'Walkthrough', href: '/walkthrough' },
-  { label: 'How It Works', href: '/how-it-works' },
-  { label: 'State Vector', href: '/state-vector' },
-  { label: 'Reward Function', href: '/reward-function' },
+  { label: 'Start Here', href: '/' },
+  { label: 'Overview', href: '/product-overview' },
+  { label: 'Methodology', href: '/model-methodology' },
   { label: 'Validation', href: '/validation' },
+  { label: 'Data Dictionary', href: '/data-dictionary' },
+  { label: 'Hitting & Biomech', href: '/hitting-biomechanics' },
+  { label: 'GTM', href: '/gtm-rails' },
   { label: 'Glossary', href: '/glossary' },
-  { label: 'Limitations', href: '/limitations' },
+  { label: 'Archive', href: '/archive' },
 ] as const;
 
 export const ANIMATION = {

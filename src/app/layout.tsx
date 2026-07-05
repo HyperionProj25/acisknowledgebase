@@ -4,7 +4,8 @@ import Navigation from "@/components/Navigation";
 
 export const metadata: Metadata = {
   title: "ACIS Knowledge Base | Baseline Analytics",
-  description: "Arm Care Intelligence System (ACIS) - AI-Powered Pitcher Injury Prevention. Interactive training portal for Baseline Analytics leadership.",
+  description:
+    "Internal knowledge base for the Arm Care Intelligence System (ACIS) by Baseline Analytics: methodology, validation, data definitions, and GTM reference.",
   icons: {
     icon: "/favicon.png",
   },
