@@ -58,10 +58,6 @@ export const CANONICAL = {
     model: { value: "DADEP 2.0 (XGBoost)", outbound: false },
     champion: { value: "SP12", outbound: false },
     features: { value: 43, outbound: false },
-    platformModel: {
-      value: "63-feature (separate build, not the scoring champion)",
-      outbound: false,
-    },
     scale: { value: "0-100", outbound: false },
     flagThreshold: { value: 41, outbound: false },
     validWindow: { value: "5th start → ~Aug 31", outbound: false },
