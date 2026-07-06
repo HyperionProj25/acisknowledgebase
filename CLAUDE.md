@@ -50,7 +50,7 @@ The `/archive` section preserves the retired reinforcement-learning proof of con
 ## Auth
 - `/api/auth` verifies the PIN from the `SITE_PIN` environment variable and sets an HMAC-SHA256 signed, expiring session cookie (`acis-auth`).
 - `src/middleware.ts` verifies the signature and expiry with Web Crypto on every request (edge-safe; do not add `runtime = "nodejs"` directives, they crash Netlify edge functions).
-- Signing secret: `AUTH_SECRET` env var, falling back to `SITE_PIN` if unset. Set both in Netlify.
+- Signing secret: `SITE_PIN` and only `SITE_PIN`. On Netlify the `/api/auth` Node function and the Edge middleware are separate runtimes; a secret visible to one but not the other makes the two sides derive different HMAC keys, so a fresh token fails verification and the user loops back to `/login`. `SITE_PIN` is the one value both runtimes must see, so it is the canonical secret. Do not add an `AUTH_SECRET` fallback.
 - Token helpers live in `src/lib/auth-token.ts`.
 
 ## Brand Identity

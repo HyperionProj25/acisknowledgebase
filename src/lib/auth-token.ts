@@ -8,14 +8,26 @@
  * Uses only Web Crypto so it runs in both the Node runtime (API route)
  * and the edge runtime (middleware) without runtime directives, which
  * have crashed Netlify edge functions before.
+ *
+ * The secret is SITE_PIN and only SITE_PIN. On Netlify the signing side
+ * (the /api/auth Node function) and the verifying side (this code running
+ * in the Edge middleware) are separate runtimes that each read their own
+ * environment. Any secret that is visible to one runtime but not the other
+ * makes the two sides derive different keys, so a freshly issued token
+ * fails verification and the user is bounced straight back to /login.
+ * SITE_PIN is the one value guaranteed present in both runtimes, because
+ * the app cannot function without it, so it is the canonical secret.
+ * Do not reintroduce an AUTH_SECRET fallback here: a variable that is
+ * forwarded to the Node function but not the Edge function reopens exactly
+ * that cross-runtime divergence.
  */
 
 const TOKEN_PREFIX = "acis-session";
 
 function getSecret(): string {
-  const secret = process.env.AUTH_SECRET || process.env.SITE_PIN;
+  const secret = process.env.SITE_PIN;
   if (!secret) {
-    throw new Error("Neither AUTH_SECRET nor SITE_PIN is configured");
+    throw new Error("SITE_PIN is not configured");
   }
   return secret.trim();
 }

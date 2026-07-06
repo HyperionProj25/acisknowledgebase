@@ -22,7 +22,7 @@ Phase 1 (this rebuild) delivers structure and mechanics only: information archit
 | Content | MDX per doc in `content/` | Frontmatter: title, owner, last_reviewed, status, audience |
 | Canonical facts | `src/lib/canonical.ts` | Single source for every validated number |
 | Search | FlexSearch, static JSON index | Index generated at build time, no backend |
-| Auth | PIN + HMAC-signed session cookie | `SITE_PIN` + `AUTH_SECRET` env vars |
+| Auth | PIN + HMAC-signed session cookie | `SITE_PIN` env var (sole secret) |
 | CI | GitHub Actions + Netlify build | Language lint fails the build on violations |
 | Deployment | Netlify | `netlify.toml`, `@netlify/plugin-nextjs` |
 
@@ -73,10 +73,10 @@ Everything from the March 2026 RL proof of concept is preserved, functional, and
 
 ## 7. Auth
 
-- `/login` posts the PIN to `/api/auth`, which checks it against `SITE_PIN` and sets `acis-auth`: an expiring token `expiry.signature` where the signature is HMAC-SHA256 over the expiry payload with `AUTH_SECRET` (fallback: `SITE_PIN`).
+- `/login` posts the PIN to `/api/auth`, which checks it against `SITE_PIN` and sets `acis-auth`: an expiring token `expiry.signature` where the signature is HMAC-SHA256 over the expiry payload with `SITE_PIN`.
 - Middleware verifies signature and expiry via Web Crypto on every non-public request. A manually set cookie value does not pass.
 - Cookie: httpOnly, secure, sameSite lax, 30-day expiry.
-- Environment variables (set in Netlify): `SITE_PIN` (required), `AUTH_SECRET` (recommended).
+- Environment variables (set in Netlify): `SITE_PIN` (required, sole secret). It signs and verifies the session token, so it must be available to BOTH the Node function runtime and the Edge middleware runtime (all deploy contexts / scopes). The signing side and the verifying side are different runtimes; a secret one sees and the other does not makes tokens unverifiable and loops the user back to login. `AUTH_SECRET` is intentionally not used, to avoid that cross-runtime divergence.
 
 ## 8. Search
 

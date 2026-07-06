@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -22,8 +20,12 @@ export default function LoginPage() {
       });
 
       if (res.ok) {
-        router.push("/");
-        router.refresh();
+        // Hard navigation, not router.push: the middleware redirected us here,
+        // so a soft client navigation to "/" can be served from the router
+        // cache and never re-hit the middleware with the fresh auth cookie,
+        // leaving the user stuck on the login screen despite being signed in.
+        window.location.assign("/");
+        return;
       } else {
         const data = await res.json().catch(() => ({}));
         if (res.status === 500) {
