@@ -8,8 +8,7 @@ audience: internal
 
 {/* Internal audience, so field names may be shown. No em dashes.
     This documents the fields that appear in the champion's scored output. It is NOT yet
-    the full 43-feature manifest (see the note at the bottom). The 63-feature platform
-    build is walled off in its own section so the two models never get fused. */}
+    the full 43-feature manifest (see the note at the bottom). */}
 
 **Read this first.** This dictionary documents the fields that appear in the SP12 champion's
 scored output, as defined in the validation context pack. It is the working reference, not
@@ -65,20 +64,6 @@ These four are what the model produces per appearance.
 | Field | Meaning |
 | --- | --- |
 | SHAP drivers (top 3) | The three features most responsible for this appearance's score. Commonly <Fact k="internal.topDrivers" />. |
-
-## Platform build (separate model, not the scoring champion)
-
-The 63-feature platform and dashboard build is a **different model** from the SP12 scoring
-champion. Do not merge its feature list into the champion's. Its per-read SHAP surface, taken
-from a production dashboard pull, includes: season progress, days at current roster level,
-games played this season, stress load (last 10 days), season pitch count, fastball velo drop
-from career peak, prior injury with current drift, spin rate, breaking-ball load (last 7
-days), mechanical drift, pitch count versus normal, on-IL-this-season, fastball usage,
-velocity decay from release to plate, and AAA outings (last 90 days).
-
-Note: that dashboard's About tab still advertises a mean warning lead of about 15 days, a
-claim retired for SP12. If the dashboard is shown to anyone, its copy needs updating to match
-current language.
 
 ## What makes this authoritative
 
