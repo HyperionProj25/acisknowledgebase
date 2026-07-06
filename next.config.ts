@@ -12,11 +12,19 @@ const ARCHIVED_ROUTES = [
 
 const nextConfig: NextConfig = {
   async redirects() {
-    return ARCHIVED_ROUTES.map((route) => ({
-      source: `/${route}`,
-      destination: `/archive/${route}`,
-      permanent: false,
-    }));
+    return [
+      ...ARCHIVED_ROUTES.map((route) => ({
+        source: `/${route}`,
+        destination: `/archive/${route}`,
+        permanent: false,
+      })),
+      // The methodology doc moved from its original Phase 1 slug
+      {
+        source: "/model-methodology",
+        destination: "/methodology",
+        permanent: false,
+      },
+    ];
   },
 };
 

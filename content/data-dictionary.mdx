@@ -1,27 +1,87 @@
 ---
 title: Data Dictionary
-owner: "Unassigned (assign in Phase 2)"
+owner: Chase Spivey
 last_reviewed: "2026-07-05"
-status: stub
-audience: Technical
-summary: Canonical definitions for every production feature and label.
+status: draft
+audience: internal
 ---
 
-The scoring champion uses <Fact k="internal.features" /> features. A separate platform build also exists: <Fact k="internal.platformModel" />. This page will define each feature exactly once: name, definition, units, source, and caveats. It is the single highest-value onboarding artifact and can only be written from the real feature set.
+{/* Internal audience, so field names may be shown. No em dashes.
+    This documents the fields that appear in the champion's scored output. It is NOT yet
+    the full 43-feature manifest (see the note at the bottom). The 63-feature platform
+    build is walled off in its own section so the two models never get fused. */}
 
-<TodoContent>
-  The full feature table for the <Fact k="internal.features" />-feature
-  champion, provided by the modeling team. Required columns: feature name,
-  plain-language definition, units, data source, and known caveats. Also
-  document the prediction labels, the platform build's additional features,
-  and any derived aggregates. Nothing on this page may be inferred; the six
-  archived POC features are not the production feature set.
-</TodoContent>
+**Read this first.** This dictionary documents the fields that appear in the SP12 champion's
+scored output, as defined in the validation context pack. It is the working reference, not
+the complete feature manifest. The champion is documented as using <Fact k="internal.features" /> features; the fields
+below are the ones named in the scored output and are fewer than <Fact k="internal.features" />. The full manifest lives
+in the validation spreadsheets and model code, and exporting it is what makes this dictionary
+authoritative. Until then, treat this as the confirmed subset.
 
-## Data sources
+## Champion output fields
 
-<TodoContent>
-  The upstream data sources feeding the production feature set, with coverage
-  windows and known gaps. The training/evaluation corpus covers
-  <Fact k="corpus.coverage" />.
-</TodoContent>
+These four are what the model produces per appearance.
+
+| Field | Meaning |
+| --- | --- |
+| `risk_score` | The <Fact k="internal.scale" /> fatigue score. The primary output. |
+| `probability` | Raw model probability behind the score, before tier mapping. |
+| `risk_level` | Five-tier label. Note: the engine's text labels do not reliably match the published legend. Analyze by `risk_score`, not this field. |
+| `recommended_action_code` | Coded guidance tier tied to the score band. |
+
+## Champion input features (documented subset)
+
+**Workload accumulation**
+
+| Field | Meaning |
+| --- | --- |
+| `GamesPlayedSeason` | Appearances this season to date. |
+| `SeasonPitches` | Pitches thrown this season to date. |
+| `SeasonProgress` | Fraction of the season elapsed. Drives the calendar artifact; scoring is valid only through 0.65. |
+| `AcuteLoad` | Short-window workload (recent pitches, fatigue-weighted). |
+| `ChronicLoad` | Long-window baseline workload. |
+| `ACWR` | Acute-to-chronic workload ratio. Needs about four starts of chronic baseline, which sets the 5th-start floor. |
+| `WorkloadRisk` | Workload-derived risk component. |
+| `FatiguePressureScore` | Composite fatigue-pressure signal. |
+| `RestDays` | Days of rest before this appearance. |
+
+**Performance decay**
+
+| Field | Meaning |
+| --- | --- |
+| `FBAvgVelo` | Average fastball velocity for the appearance. |
+| `VeloSlope` | Trend in fastball velocity across recent starts. A declining slope is a core fatigue proxy. |
+| `SpinSlope` | Trend in spin rate across recent starts. |
+
+**Injury history**
+
+| Field | Meaning |
+| --- | --- |
+| `PriorArmILCount` | Count of prior arm-related IL stints. |
+| `HadTommyJohn` | Prior Tommy John surgery flag. |
+
+## Explainability output
+
+| Field | Meaning |
+| --- | --- |
+| SHAP drivers (top 3) | The three features most responsible for this appearance's score. Commonly <Fact k="internal.topDrivers" />. |
+
+## Platform build (separate model, not the scoring champion)
+
+The 63-feature platform and dashboard build is a **different model** from the SP12 scoring
+champion. Do not merge its feature list into the champion's. Its per-read SHAP surface, taken
+from a production dashboard pull, includes: season progress, days at current roster level,
+games played this season, stress load (last 10 days), season pitch count, fastball velo drop
+from career peak, prior injury with current drift, spin rate, breaking-ball load (last 7
+days), mechanical drift, pitch count versus normal, on-IL-this-season, fastball usage,
+velocity decay from release to plate, and AAA outings (last 90 days).
+
+Note: that dashboard's About tab still advertises a mean warning lead of about 15 days, a
+claim retired for SP12. If the dashboard is shown to anyone, its copy needs updating to match
+current language.
+
+## What makes this authoritative
+
+Export the champion feature manifest (validation `.xlsx` or model code) and reconcile it
+against the fields above. That closes the gap between this documented subset and the full
+<Fact k="internal.features" />-feature set, and lets every feature carry a definition, source, and family.

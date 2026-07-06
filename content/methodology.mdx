@@ -1,0 +1,82 @@
+---
+title: Methodology
+owner: Chase Spivey
+last_reviewed: "2026-07-05"
+status: draft
+audience: internal
+---
+
+{/* Internal audience, so SP12 / XGBoost / SHAP may be named. No em dashes, per the
+    language lint. Canonical values render through <Fact> tags. */}
+
+**The short version:** ACIS is a post-game arm-fatigue index. After each start, it reads a
+pitcher's recent workload and performance-decay signals and returns a 0 to 100 score
+trained against a 30-day arm-injury-list outcome. It is not a real-time feed and not a
+probability of injury. It is a fatigue meter.
+
+## What the model is
+
+The scoring champion is **<Fact k="internal.champion" />**, a gradient-boosted tree model (**XGBoost**). It is trained
+on the research corpus (**<Fact k="corpus.pitches" />** tracked pitches, **<Fact k="corpus.appearances" />** pitcher-game appearances across
+11 MLB seasons plus AAA) and produces one score per appearance. The learning target is
+whether an arm reached the injured list with an arm injury within a 30-day horizon, so the
+model learns the *state that precedes* breakdown rather than any single event.
+
+## What it reads (feature families)
+
+The documented champion fields fall into three families. Exact per-feature definitions are
+in the [Data Dictionary](/data-dictionary).
+
+- **Workload accumulation.** Acute and chronic load, the acute-to-chronic workload ratio
+  (ACWR), a fatigue-pressure composite, rest days, and season-to-date volume (games,
+  pitches, season progress).
+- **Performance decay.** Fastball velocity trend (VeloSlope), spin trend (SpinSlope), and
+  average fastball velocity. These are the biomechanical proxies: an arm compensating for
+  fatigue tends to bleed velocity and spin before it fails.
+- **Injury history.** Prior arm-IL count and prior Tommy John status.
+
+The design rationale for these choices (why exponentially-weighted workload beats a raw
+ACWR window, why velocity-decay slope and release-point drift are load-bearing) is
+documented in the pitcher-fatigue research report. Note that report describes the feature
+*basis*; the authoritative production feature set is defined in the Data Dictionary.
+
+## How it explains itself
+
+Every score ships with its top drivers via **SHAP** (the standard method for attributing a
+tree model's output to individual features). Operationally the read surfaces the **top 3
+drivers** per appearance. The most common are <Fact k="internal.topDrivers" />. A full
+top-10 SHAP-to-mechanism mapping is a roadmap item, not yet shipped, so do not present it
+as live.
+
+## How it was validated
+
+- **Development:** leave-season-out cross-validation. The model is trained on all seasons
+  but one and tested on the held-out season, rotating through. This prevents a model from
+  looking good only because it memorized a particular year. Out-of-fold AUC is about 0.72.
+- **Out-of-sample:** the blind <Fact k="validation.cohortSize" />-arm cohort described in
+  [Validation](/validation), AUC <Fact k="validation.auc" />. See the Validation section
+  for the full result, the operating point, and the soft spots.
+
+## What it outputs
+
+- A **<Fact k="internal.scale" />** fatigue score, mapped to a five-tier scale (Low 0-20, Moderate 21-40,
+  Elevated 41-60, High 61-80, Critical 81-100).
+- A flag at a score of **<Fact k="internal.flagThreshold" />** or higher (Elevated and above).
+- A valid scoring window from a pitcher's 5th start (the chronic baseline needs about four
+  starts to form) through the first 65% of the season. Reads outside that window are out of
+  scope, not misses.
+
+## Scope and language
+
+ACIS is a **post-game** system, never described as real-time or in-game. It is a fatigue
+and workload-intelligence tool, full stop: the banned-framing rules in
+[GTM Rails](/gtm-rails) and CLAUDE.md govern how it is described, and the CI language lint
+enforces them on every build. The signal that carries the model is *sustained elevation*
+across starts, not any single reading.
+
+## Open verify items
+
+- The exact champion development AUC (0.720 / 0.726 / 0.727 across sources) is not yet
+  pinned. All round to about 0.72.
+- The full production feature manifest (the "<Fact k="internal.features" /> features" count) needs an export to be
+  authoritative. See the Data Dictionary note.

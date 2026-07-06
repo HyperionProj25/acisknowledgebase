@@ -34,7 +34,7 @@ Nine routed sections, all navigable from the fixed top nav:
 |---|---------|-------|---------------|
 | 1 | Start Here | `/` | Stub with section map and role paths placeholder |
 | 2 | Product Overview | `/product-overview` | Stub, canonical numbers wired |
-| 3 | Model Methodology | `/model-methodology` | Stub, canonical numbers wired |
+| 3 | Methodology | `/methodology` | Draft (team-authored) |
 | 4 | Validation | `/validation` | Stub, canonical numbers wired |
 | 5 | Data Dictionary | `/data-dictionary` | Stub (feature docs are Phase 2) |
 | 6 | Hitting & Biomechanics | `/hitting-biomechanics` | Stub |

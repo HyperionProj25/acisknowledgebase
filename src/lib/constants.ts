@@ -20,7 +20,7 @@ export const COLORS = {
 export const NAV_ITEMS = [
   { label: 'Start Here', href: '/' },
   { label: 'Overview', href: '/product-overview' },
-  { label: 'Methodology', href: '/model-methodology' },
+  { label: 'Methodology', href: '/methodology' },
   { label: 'Validation', href: '/validation' },
   { label: 'Data Dictionary', href: '/data-dictionary' },
   { label: 'Hitting & Biomech', href: '/hitting-biomechanics' },

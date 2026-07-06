@@ -36,7 +36,7 @@ Run `npm run lint:language` before committing content changes.
 ## Sections (information architecture)
 1. Start Here (`/`) - orientation and role-based reading paths
 2. Product Overview (`/product-overview`)
-3. Model Methodology (`/model-methodology`)
+3. Methodology (`/methodology`)
 4. Validation (`/validation`)
 5. Data Dictionary (`/data-dictionary`)
 6. Hitting & Biomechanics (`/hitting-biomechanics`)
