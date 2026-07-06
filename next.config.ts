@@ -18,10 +18,15 @@ const nextConfig: NextConfig = {
         destination: `/archive/${route}`,
         permanent: false,
       })),
-      // The methodology doc moved from its original Phase 1 slug
+      // Docs that moved from their original Phase 1 slugs
       {
         source: "/model-methodology",
         destination: "/methodology",
+        permanent: false,
+      },
+      {
+        source: "/hitting-biomechanics",
+        destination: "/biomechanics-roadmap",
         permanent: false,
       },
     ];

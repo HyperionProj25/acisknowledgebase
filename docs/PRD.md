@@ -37,7 +37,7 @@ Nine routed sections, all navigable from the fixed top nav:
 | 3 | Methodology | `/methodology` | Draft (team-authored) |
 | 4 | Validation | `/validation` | Stub, canonical numbers wired |
 | 5 | Data Dictionary | `/data-dictionary` | Stub (feature docs are Phase 2) |
-| 6 | Hitting & Biomechanics | `/hitting-biomechanics` | Stub |
+| 6 | Biomechanics Roadmap | `/biomechanics-roadmap` | Draft (team-authored) |
 | 7 | GTM Rails | `/gtm-rails` | Stub |
 | 8 | Glossary | `/glossary` | Term slots with TODO definitions |
 | 9 | Archive | `/archive` | Complete: the preserved March 2026 POC |

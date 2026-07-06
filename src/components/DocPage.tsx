@@ -1,7 +1,12 @@
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import type { Doc, DocStatus } from "@/lib/docs";
 import Fact from "@/components/mdx/Fact";
 import TodoContent from "@/components/mdx/TodoContent";
+
+const mdxOptions = {
+  mdxOptions: { remarkPlugins: [remarkGfm] },
+};
 
 const STATUS_STYLES: Record<DocStatus, string> = {
   stub: "bg-warning/10 text-warning border-warning/30",
@@ -38,7 +43,11 @@ export default function DocPage({ doc }: { doc: Doc }) {
         </div>
       </header>
       <div className="doc-prose">
-        <MDXRemote source={doc.body} components={mdxComponents} />
+        <MDXRemote
+          source={doc.body}
+          components={mdxComponents}
+          options={mdxOptions}
+        />
       </div>
     </article>
   );

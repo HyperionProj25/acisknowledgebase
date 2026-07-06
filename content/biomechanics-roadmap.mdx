@@ -1,0 +1,71 @@
+---
+title: Biomechanics Roadmap
+owner: Chase Spivey
+last_reviewed: "2026-07-05"
+status: draft
+audience: internal
+---
+
+{/* Replaces the "Hitting & Biomechanics" stub. There is no current hitting content in the
+    record, so this page covers the biomechanics / fascial-science roadmap only. No em dashes.
+    Internal audience. The proven-vs-hypothesis boundary below is a hard rule. */}
+
+**The governing rule for this entire page.** We do not claim that ACIS signals are caused by
+fascial tissue changes. We present the fascial-science literature as a parallel evidence base
+that is *consistent with* what ACIS observes, and we are designing research to test whether
+they are the same signal at different levels. Every outbound word respects that boundary.
+
+## Why this matters
+
+SP12 detects fatigue patterns from pitch-level data. Separately, a decade of peer-reviewed
+fascial science shows that connective tissue changes measurably under repeated loading, with
+recovery running on more than one biological clock. The overlap between what ACIS detects and
+what the tissue literature measures is striking, but overlap is not causation. This roadmap is
+how we move from "consistent with" to "validated by."
+
+## Proven vs hypothesis (the internal truth table)
+
+**Proven:**
+
+- ACIS detects fatigue patterns that track injured-list risk (this is the model's validated
+  result).
+- Posterior shoulder and lat stiffness rise measurably after throwing, and stiffness shifts
+  appear before strength loss (multiple shear-wave elastography studies).
+- The UCL softens measurably across a season.
+- A meaningful share of force transmits laterally through fascial continuities.
+- Connective-tissue recovery runs on at least two time constants (roughly 2-day gliding
+  turnover, 3 to 7-plus-day structural).
+
+**Hypothesis (not yet validated):**
+
+- That ACIS's computational signals are actually detecting fascial tissue changes. No study
+  has measured both in the same pitchers.
+- That specific ACIS risk tiers correspond to specific tissue states.
+- That modeling recovery as two clocks will improve the model's accuracy.
+
+## The three horizons
+
+**Horizon 1, reframe and document (now).** No model changes. Align the whole team on what is
+proven, what is hypothesis, and where the line sits. Produce the internal driver-to-mechanism
+reference and the positioning materials, all using "independently, the literature shows" and
+"we are designing research to test."
+
+**Horizon 2, build and test (3 to 6 months).** Fascial science starts informing features, each
+one framed as a pre-registered experiment with a kill criterion. Candidates: dual time-constant
+recovery features, stiffness-proxy features from pitch data, and (blocked on Hawk-Eye access)
+posterior-chain load features. The test is simple: does the biologically motivated feature
+improve accuracy by a pre-set margin? If yes, that is evidence. If no, we drop it and say so.
+
+**Horizon 3, validate and publish (6 to 18 months).** The study nobody has run: measure ACIS
+inputs and direct tissue state (shear-wave elastography) in the same 12 to 20 pitchers across a
+season, with an academic partner for IRB and co-authorship. A positive result upgrades the
+framework from "consistent with" to "validated by." A null result is published honestly, and
+ACIS keeps running on its proven computational foundation.
+
+## Dependencies and honesty
+
+- The posterior-chain work is **blocked on MLB biomechanical (Hawk-Eye) data access.** There is
+  no active LOI today; the current status is legal review. See [GTM Rails](/gtm-rails).
+- Every horizon has pre-defined confirm and refute thresholds set before testing, not after.
+- This is a living document. The rule that does not change: we go where the evidence takes us,
+  report what we find, and never claim more than we have proven.

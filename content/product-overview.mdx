@@ -1,37 +1,47 @@
 ---
 title: Product Overview
-owner: "Unassigned (assign in Phase 2)"
+owner: Chase Spivey
 last_reviewed: "2026-07-05"
-status: stub
-audience: All
-summary: What the Arm Care Intelligence System is and who it serves.
+status: draft
+audience: internal
 ---
 
-The Arm Care Intelligence System (ACIS) is Baseline Analytics' arm care and workload intelligence product. ACIS is a post-game system. This page is the canonical description of what it is, who it is for, and how its parts fit together.
+{/* Internal audience. No em dashes. Canonical numbers render through <Fact> tags. */}
 
-## Current system
+**ACIS is a post-game arm-fatigue and workload-intelligence system for MLB pitchers.** After
+each start, it scores the arm from 0 to 100 based on how the pitcher's recent workload and
+performance signals compare to the state that precedes breakdown. One score per appearance,
+mapped to a five-tier scale.
 
-- Production model: <Fact k="internal.model" />, scoring champion <Fact k="internal.champion" />
-- Headline validation: AUC <Fact k="validation.auc" /> on a <Fact k="validation.cohort" /> cohort of <Fact k="validation.cohortSize" /> arms (<Fact k="validation.years" />)
-- Training/evaluation corpus: <Fact k="corpus.pitches" /> pitches across <Fact k="corpus.appearances" /> appearances, covering <Fact k="corpus.coverage" /> (the corpus is not the validation cohort)
+## The problem it addresses
 
-<TodoContent>
-  Approved positioning statement and one-paragraph product description, written
-  by the team using the approved language list from GTM Rails.
-</TodoContent>
+Pitcher arm injuries are one of the largest unsolved cost and product-quality problems in
+MLB. Teams lose premium salary to the injured list every season, and the sport loses its
+best arms to breakdowns that build up quietly across a season. The signal that precedes those
+breakdowns is real but hard to see with the box score, which is the gap ACIS fills.
 
-## Who it serves
+## What makes it credible
 
-<TodoContent>
-  Audience and use cases: teams, staff roles, and decision contexts ACIS
-  supports today, consistent with the post-game framing.
-</TodoContent>
+The scoring champion, **<Fact k="internal.champion" />**, was tested on a <Fact k="validation.cohort" /> cohort of
+**<Fact k="validation.cohortSize" />** arms (**<Fact k="validation.cases" />** that reached the injured list, **<Fact k="validation.controls" />** matched healthy controls)
+and separated them with an AUC of **<Fact k="validation.auc" />**, up from **<Fact k="validation.priorAuc" />** on the prior model. The signal is
+sustained elevation across starts, and it is roughly uncorrelated with box-score performance,
+which is why conventional analytics do not already surface it. See [Validation](/validation)
+for the full result and its limits.
 
-## System architecture
+## What ACIS is not
 
-<TodoContent>
-  Current architecture summary: system layers, how post-game outputs reach
-  users, and how the hitting and biomechanics work relates to the pitching
-  product. The two-layer framing on the archived POC overview is retired;
-  do not carry it forward without the team confirming what replaced it.
-</TodoContent>
+- **Not real-time.** It is a post-game read, never described as an in-game or live system.
+- **Not an injury predictor.** {/* lint-language-disable-line: states the ban */} It is a
+  fatigue meter. It does not output a probability of injury, and we do not frame it that way.
+- **Not a data moat.** ACIS runs on public Statcast data. The company does not have, and does
+  not claim, a proprietary-data advantage. This matters; see [GTM Rails](/gtm-rails) before
+  writing anything external.
+
+## Where the forward edge actually is
+
+The durable advantage is not historical data. It is two things: access to biomechanical data
+(Hawk-Eye and TrackMan) that raises the ceiling on what the model can see, and distribution
+partnerships that put ACIS in front of teams. The biomechanical research direction is laid out
+in the [Biomechanics Roadmap](/biomechanics-roadmap); partnership status is tracked in
+[GTM Rails](/gtm-rails).

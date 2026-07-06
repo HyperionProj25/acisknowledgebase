@@ -1,43 +1,51 @@
 ---
 title: Start Here
-owner: "Unassigned (assign in Phase 2)"
+owner: Chase Spivey
 last_reviewed: "2026-07-05"
-status: stub
-audience: All
-summary: Orientation for the ACIS knowledge base and where to begin by role.
+status: draft
+audience: internal
 ---
 
-Welcome to the internal knowledge base for the Arm Care Intelligence System (ACIS) by Baseline Analytics. This is the team's source of truth for what ACIS is, how it is built and validated, and how we talk about it.
+{/* Internal audience. No em dashes. Canonical numbers render through <Fact> tags. */}
 
-## The system at a glance
+**What this is.** The single source of truth for the Arm Care Intelligence System (ACIS).
+If a number or claim about ACIS lives anywhere else and disagrees with this site, this site
+wins. Every page carries an owner and a last-reviewed date so you can tell what is current.
 
-ACIS is a post-game system. The production model is <Fact k="internal.model" />, and the scoring champion is <Fact k="internal.champion" />. The headline validation result: AUC <Fact k="validation.auc" /> on a <Fact k="validation.cohort" /> cohort of <Fact k="validation.cohortSize" /> arms (<Fact k="validation.years" />), up from <Fact k="validation.priorAuc" /> for the prior model. These figures come from the canonical facts file and update everywhere at once.
+**What ACIS is, in one line.** A post-game arm-fatigue index for MLB pitchers. It reads a
+pitcher's recent workload and performance-decay signals after each start and returns a
+<Fact k="internal.scale" /> fatigue score. It is a fatigue meter, not an injury predictor, and not a real-time feed. {/* lint-language-disable-line: states the ban */}
 
-<TodoContent>
-  One-paragraph plain-language description of what ACIS does today, written and
-  approved by the team. Do not fill this by inference from older material.
-</TodoContent>
+**The one rule everyone follows.** ACIS is described as fatigue monitoring, workload
+intelligence, arm health insights, or durability optimization.
+Never as injury prediction or injury prevention. {/* lint-language-disable-line: states the ban */}
+This holds in every document, deck, email, and conversation. The full language guide is in
+[GTM Rails](/gtm-rails).
 
-## Reading paths
+## Read in this order
 
-<TodoContent>
-  Role-based reading paths belong here in Phase 2: what a technical hire, a GTM
-  hire, and an advisor or partner-facing teammate should read, in what order.
-</TodoContent>
+**If you are technical (analyst, engineer, data):**
 
-## Sections
+1. [Methodology](/methodology), how SP12 works and how it was built
+2. [Data Dictionary](/data-dictionary), what each feature means
+3. [Validation](/validation), the results and the honest soft spots
 
-- [Product Overview](/product-overview): what ACIS is and who it serves
-- [Methodology](/methodology): how the production system is built and retrained
-- [Validation](/validation): how performance is measured and what the current numbers are
-- [Data Dictionary](/data-dictionary): every production feature, defined once
-- [Hitting & Biomechanics](/hitting-biomechanics): work beyond pitcher workload
-- [GTM Rails](/gtm-rails): approved language, positioning, and partnership status
-- [Glossary](/glossary): shared vocabulary
-- [Archive](/archive): the March 2026 proof of concept, preserved as history. Not the current system.
+**If you are commercial (GTM, partnerships, investor-facing):**
 
-## House rules
+1. [Product Overview](/product-overview), what ACIS is and why it matters
+2. [GTM Rails](/gtm-rails), approved language and partnership status
+3. [Validation](/validation), the numbers you can and cannot say out loud
 
-- Validated numbers live only in `src/lib/canonical.ts` and render through the Fact component. Every fact carries an outbound flag; pages marked `audience: outbound` can only render outbound-approved facts.
-- A CI language lint blocks banned phrasing, em dashes, and retired numbers from live pages. See CLAUDE.md for the rules.
-- Every doc carries an owner, a status, and a last-reviewed date in its header.
+**If you are an advisor or exec:**
+
+1. [Product Overview](/product-overview)
+2. [Validation](/validation), the headline result and its limits
+
+## Current at a glance
+
+- Champion model: **<Fact k="internal.champion" />**
+- Headline result: AUC **<Fact k="validation.auc" />** on a <Fact k="validation.cohort" /> **<Fact k="validation.cohortSize" />**-arm cohort
+- What it runs on: public Statcast data (there is no proprietary-data moat; see [GTM Rails](/gtm-rails))
+- Forward edge: biomechanical data access plus distribution partnerships
+
+New here? Start with [Product Overview](/product-overview), then come back to your track above.

@@ -1,40 +1,62 @@
 ---
 title: GTM Rails
-owner: "Unassigned (assign in Phase 2)"
+owner: Chase Spivey
 last_reviewed: "2026-07-05"
-status: stub
-audience: GTM
-summary: Approved language, positioning, and partnership status.
+status: draft
+audience: internal
 ---
 
-This page is the guardrail for anything outward-facing: the approved way to describe the Arm Care Intelligence System (ACIS), the language we never use, and the live status of partner conversations.
+{/* This page is internal, so it names the internal-only terms in the "never say outbound"
+    list on purpose. Do NOT mark this page audience: outbound. No em dashes. Lines that
+    quote a banned phrase to forbid it carry lint-language-disable-line. */}
 
-## Language discipline
+This page is the language and positioning guardrail for anything that leaves the building.
+When in doubt, follow the lists here.
 
-A CI lint (`scripts/lint-language.mjs`) blocks banned framing from every live page of this knowledge base, so the build itself enforces the rule. The banned list and its rationale are documented in CLAUDE.md at the repo root.
+## Say this, not that
 
-Two standing rules beyond the lint:
+**Say:** fatigue monitoring, workload intelligence, arm health insights, durability
+optimization, arm-fatigue index, post-game read.
 
-- ACIS is a post-game system and is always described that way. It is never described as a real-time or in-game system.
-- Outbound material may only use facts flagged `outbound: true` in `src/lib/canonical.ts`. Pages marked `audience: outbound` enforce this at build time and automatically use plain-language labels where they exist (for example, the AUC renders as its approved plain-language label).
+**Never say:** injury prediction, injury prevention. {/* lint-language-disable-line: quotes the banned phrases to forbid them */} These two phrases are banned in every
+material. The build itself will reject them.
 
-<TodoContent>
-  The full approved-language guide: the do-say and do-not-say list with
-  approved substitutions, written and signed off by leadership. The CI lint
-  enforces the machine-checkable subset; this section is the human reference.
-</TodoContent>
+**Also never say:**
 
-## Positioning
+- **Real-time or in-game.** ACIS is a post-game system. Full stop.
+- **Data moat, proprietary data, or clean-room rebuild.** ACIS runs on public Statcast data.
+  There is no defensible historical-data advantage, and claiming one is both false and
+  fragile. The real edge is biomechanical data access plus distribution.
+- **Anything mapping ACIS scores to fascial tissue states as proven.** Use "consistent with"
+  and "designing research to test." See the [Biomechanics Roadmap](/biomechanics-roadmap).
 
-<TodoContent>
-  Approved positioning statements by audience (team executives, medical staff,
-  player agency, media), pricing rails, and competitive framing.
-</TodoContent>
+## Keep the internals internal
 
-## Partnership status
+The following are never named in outbound documents, decks, or conversations. They are fine
+here on internal pages; they do not leave:
 
-<TodoContent>
-  Living record of partner conversations and pilot status, with a last-updated
-  stamp per entry. Update the frontmatter last_reviewed date whenever this
-  section changes.
-</TodoContent>
+- The model name **<Fact k="internal.champion" />** and the fact that it is **XGBoost**
+- **SHAP**, feature names, threshold values, and window lengths
+- The term **AUC**. Outbound, express it in plain language: "it ranks the injured arm higher
+  about four times out of five."
+
+## Positioning in one breath
+
+ACIS sees the arm-fatigue signal that precedes breakdown, a signal that is nearly invisible to
+the box score, validated blind on arms it had never seen. The forward edge is biomechanical
+data plus distribution, not a data moat.
+
+## Partnership status (living, keep current)
+
+_Last updated 2026-07-05. This section goes stale fast; update the date when you touch it._
+
+- **MLB (biomechanical data access):** in legal review for Hawk-Eye biomechanical data access.
+  **No active LOI.** Do not reference an LOI in any material.
+- **TrackMan:** active partnership development, including a biomechanics-visualization white-label
+  track.
+- **Uplift Labs:** complementary sensing layer, in development.
+- **GameChanger:** event data and distribution track.
+- **Industry Advisory Board:** active, with the MLB committee chaired by our central league
+  champion.
+
+Anything here older than a few weeks should be reconfirmed before it goes into a document.

@@ -1,32 +1,67 @@
 ---
 title: Glossary
-owner: "Unassigned (assign in Phase 2)"
+owner: Chase Spivey
 last_reviewed: "2026-07-05"
-status: stub
-audience: All
-summary: Shared vocabulary for the current ACIS system.
+status: draft
+audience: internal
 ---
 
-Shared vocabulary for the current system. The retired proof-of-concept glossary (reinforcement learning era) is preserved in the [archive](/archive/glossary); its terms are not current vocabulary.
+{/* Internal audience, terms may be named. No em dashes. Alphabetical. */}
 
-## Terms
+Current ACIS vocabulary. The old reinforcement-learning terms live only in the
+[Archive](/archive/glossary).
 
-| Term | Definition |
-| --- | --- |
-| <Fact k="internal.model" /> | TODO(content) |
-| <Fact k="internal.champion" /> | TODO(content) |
-| AUC | TODO(content) |
-| Cohort study (<Fact k="validation.cohort" />) | TODO(content) |
-| Sustained elevation | TODO(content) |
-| Operating point | TODO(content) |
-| Flag threshold | TODO(content) |
-| Valid scoring window | TODO(content) |
-| Post-game system | TODO(content) |
-| Arm Under Load | TODO(content) |
-| TrackMan markerless capture | TODO(content) |
+**ACIS.** Arm Care Intelligence System. A post-game arm-fatigue and workload-intelligence
+system for MLB pitchers. Scores each appearance <Fact k="internal.scale" />.
 
-<TodoContent>
-  Definitions for the seeded terms above, plus any missing terms, written by
-  the team. Each definition should be one to three sentences in plain
-  language, consistent with the Data Dictionary and Validation pages.
-</TodoContent>
+**ACWR.** Acute-to-chronic workload ratio. Recent workload divided by longer-baseline workload.
+Needs about four starts of baseline to compute, which sets the model's 5th-start floor.
+
+**AUC.** Area under the ROC curve. A single number for how well the model separates injured from
+healthy arms. 0.50 is random, 1.0 is perfect. SP12 scores <Fact k="validation.auc" /> on the blind cohort. Internal
+term only; never used in outbound materials.
+
+**Blind cohort.** The held-out validation set: <Fact k="validation.cohortSize" /> arms (<Fact k="validation.cases" /> injured, <Fact k="validation.controls" /> workload-matched
+controls) the model never saw in training. The out-of-sample test of how ACIS performs on new
+arms.
+
+**Catch rate.** The share of injured pitchers ACIS flagged before their injured-list date. An
+earlier framing (<Fact k="priorStudy.inSeason" /> in-season) now kept as internal history; the blind-cohort AUC is the
+current headline.
+
+**Fascial science.** The connective-tissue research base that runs parallel to ACIS. Treated as
+"consistent with" ACIS's signals, never as a proven mechanism. See
+[Biomechanics Roadmap](/biomechanics-roadmap).
+
+**Fatigue meter.** How we describe ACIS. It measures accumulated arm fatigue, not a probability
+of injury.
+
+**Hawk-Eye.** MLB's optical tracking system and the source of the biomechanical data ACIS needs
+for its next research horizon. Access is in legal review; no LOI today.
+
+**Leave-season-out cross-validation.** The development test: train on every season but one, test
+on the held-out season, rotate through. Prevents the model from looking good by memorizing a
+single year.
+
+**Research corpus.** The training and evaluation data: <Fact k="corpus.pitches" /> tracked pitches, <Fact k="corpus.appearances" />
+pitcher-game appearances across 11 MLB seasons plus AAA. Distinct from the blind cohort; do not
+fuse the two.
+
+**SHAP.** The method that attributes each score to individual features, surfacing the top drivers
+per read. Internal term only.
+
+**Shear-wave elastography (SWE).** Ultrasound-based tissue-stiffness measurement, the direct
+tissue read the Horizon 3 validation study would pair against ACIS scores.
+
+**SP12.** The current scoring champion model. An XGBoost model. Internal name only.
+
+**Sustained elevation.** The operative signal: the share of a pitcher's starts sitting at or
+above the flag line, not whether they crossed it once. This is what separates the cohorts.
+
+**Valid window.** The span where ACIS scores are trusted: from a pitcher's 5th start through the
+first 65% of the season. Reads outside it are out of scope, not misses.
+
+**Workload intelligence.** One of the approved descriptions of what ACIS provides. See
+[GTM Rails](/gtm-rails).
+
+**XGBoost.** The gradient-boosted decision-tree algorithm SP12 is built on. Internal term only.

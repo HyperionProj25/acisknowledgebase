@@ -258,11 +258,23 @@ input[type="range"]::-moz-range-thumb {
   padding: 0.15em 0.4em;
   color: #FBD38D;
 }
+/* Tables can be wider than a phone; let each one scroll in its own box
+   instead of pushing the page into horizontal scroll. */
 .doc-prose table {
-  width: 100%;
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
   border-collapse: collapse;
   margin: 1.25rem 0;
   font-size: 0.9rem;
+  -webkit-overflow-scrolling: touch;
+}
+.doc-prose thead,
+.doc-prose tbody {
+  width: 100%;
+}
+.doc-prose td:first-child {
+  white-space: nowrap;
 }
 .doc-prose th {
   text-align: left;

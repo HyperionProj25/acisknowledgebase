@@ -39,7 +39,7 @@ Run `npm run lint:language` before committing content changes.
 3. Methodology (`/methodology`)
 4. Validation (`/validation`)
 5. Data Dictionary (`/data-dictionary`)
-6. Hitting & Biomechanics (`/hitting-biomechanics`)
+6. Biomechanics Roadmap (`/biomechanics-roadmap`)
 7. GTM Rails (`/gtm-rails`)
 8. Glossary (`/glossary`)
 9. Archive (`/archive`) - the March 2026 RL proof of concept, preserved read-only behind a persistent banner

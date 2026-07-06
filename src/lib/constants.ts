@@ -23,7 +23,7 @@ export const NAV_ITEMS = [
   { label: 'Methodology', href: '/methodology' },
   { label: 'Validation', href: '/validation' },
   { label: 'Data Dictionary', href: '/data-dictionary' },
-  { label: 'Hitting & Biomech', href: '/hitting-biomechanics' },
+  { label: 'Biomechanics Roadmap', href: '/biomechanics-roadmap' },
   { label: 'GTM', href: '/gtm-rails' },
   { label: 'Glossary', href: '/glossary' },
   { label: 'Archive', href: '/archive' },

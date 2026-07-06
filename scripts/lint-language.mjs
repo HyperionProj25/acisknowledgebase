@@ -12,8 +12,15 @@
  * Scope: content/** and src/** EXCEPT paths containing an "archive" segment.
  * The archive is a preserved historical record behind a banner and is exempt.
  *
+ * Escape hatch: a line containing "lint-language-disable-line" (put it in an
+ * inline MDX comment) is skipped. This exists ONLY for lines that MENTION a
+ * banned phrase while stating the ban, e.g. the GTM Rails do-not-say list.
+ * Never use it on actual product copy.
+ *
  * Run directly: node scripts/lint-language.mjs
  */
+
+const DISABLE_MARKER = "lint-language-disable-line";
 
 import fs from "node:fs";
 import path from "node:path";
@@ -101,6 +108,7 @@ for (const dir of SCAN_DIRS) {
     if (isExemptPath(relPath)) continue;
     const lines = fs.readFileSync(file, "utf8").split("\n");
     lines.forEach((line, i) => {
+      if (line.includes(DISABLE_MARKER)) return;
       for (const rule of RULES) {
         for (const pattern of rule.patterns) {
           const match = line.match(pattern);
